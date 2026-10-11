@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Security Forces</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>:root{--bg:#0c0e11;--bar:#08090b;--side:#101318;--p:#151920;--p2:#1c212a;--ln:#252b34;--tx:#e3e7ec;--mu:#8791a0;--st:#8791a0;--bl:#3b82d6;--bl2:#2d6bb5;--gn:#3aa76d;--rd:#d8505a;--am:#d9a441;--blue:#6aa6ec;--red:#f08a92;--navy:#101318;--ink:#0c0e11;--lt:#1c212a;--gold:#d9a441;--ok:#3aa76d}
+*{box-sizing:border-box;margin:0}
+html{color-scheme:dark}html,body{height:100%}
+body{background:var(--bg);color:var(--tx);font:14px/1.45 Roboto,system-ui,"Segoe UI",Arial,sans-serif}
+.hidden{display:none!important}.mu{color:var(--mu);font-size:13px}.f{font-weight:500}.sp{flex:1}.num{font-variant-numeric:tabular-nums}
+.mono,code,pre{font-family:"Roboto Mono",ui-monospace,Consolas,monospace}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+input,select,textarea{width:100%;background:#0e1115;border:1px solid #2b323c;border-radius:3px;padding:7px 10px;color:var(--tx);font:inherit}
+input:focus,select:focus,textarea:focus{outline:1px solid var(--bl);border-color:var(--bl)}
+input[type=color]{padding:2px;height:36px}input[type=checkbox]{width:auto}option{background:#0e1115}textarea{resize:vertical}
+label{display:block;font-size:11.5px;color:var(--mu);margin-bottom:4px;font-weight:500;text-transform:uppercase;letter-spacing:.06em}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.nb{display:inline-flex;align-items:center;justify-content:center;height:34px;padding:0 16px;margin:0;border-radius:3px;background:var(--bl);color:#fff;font-weight:500;white-space:nowrap;border:1px solid var(--bl)}
+.nb:hover{background:var(--bl2)}.nb.s{height:28px;padding:0 11px;font-size:13px}.nb.d{background:transparent;color:var(--red);border-color:#5a2c31}.nb.d:hover{background:#3a2023}
+.nb:disabled{opacity:.5}.nb:focus-visible,.sb:focus-visible{outline:2px solid #7fb2ee;outline-offset:2px}
+.sb{flex:1;min-width:130px;height:34px;display:flex;gap:8px;align-items:center;justify-content:center;border:1px solid #2f3742;border-radius:3px;background:#12161b;margin:0}.sb:hover{border-color:var(--bl)}.sb.on{background:#1f2c40;border-color:var(--bl)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--gn);display:inline-block;flex:none}.idle{background:var(--am)}.dnd{background:var(--rd)}.offline{background:#69707a}
+.err{color:var(--red);min-height:20px;font-size:13px;margin-bottom:6px}
+/* login */
+#login{min-height:100vh;display:grid;place-items:center;padding:24px;background:var(--bg)}
+.lbox{width:100%;max-width:420px;background:var(--p);border:1px solid var(--ln);border-top:3px solid var(--bl);padding:30px}
+.lhead{display:flex;align-items:center;gap:14px;margin-bottom:6px}.lhead .plate{height:64px}.lhead .plate img{height:54px}
+.lbox .wm{font-size:22px}.motto{font-size:12px;color:var(--mu);letter-spacing:.2em;text-transform:uppercase;margin-bottom:26px}.lbox .f1{margin-bottom:15px}
+/* workbench shell */
+.wb{display:grid;grid-template-columns:236px minmax(0,1fr);grid-template-rows:52px minmax(0,1fr) auto;height:100vh;overflow:hidden}
+.bar{grid-column:1/-1;display:flex;align-items:center;gap:16px;padding:0 16px;background:var(--bar);border-bottom:1px solid var(--ln)}
+.mk{display:flex;align-items:center;gap:12px;cursor:pointer;white-space:nowrap}
+.plate{background:#fff;border-radius:3px;padding:3px 7px;display:flex;align-items:center;height:36px}.plate img{height:30px;width:auto;display:block}
+.wm{font-weight:700;letter-spacing:.14em;text-transform:uppercase;font-size:16px}
+.jump{position:relative;width:300px;max-width:30vw}.jump input{height:30px;padding:4px 10px;font-size:13px}
+.jpal{position:absolute;left:0;right:0;top:100%;margin-top:4px;background:var(--p2);border:1px solid var(--ln);z-index:60;box-shadow:0 10px 24px #000a}
+.jpal button{display:flex;justify-content:space-between;width:100%;padding:8px 12px;text-align:left}.jpal button:hover,.jpal button.on{background:#262d38}
+.zt{font:13px "Roboto Mono",monospace;color:var(--mu);white-space:nowrap}.stt{display:flex;align-items:center;gap:8px;font-size:13px;color:#b3bac4;white-space:nowrap}
+.exp{background:var(--side);border-right:1px solid var(--ln);overflow-y:auto;display:flex;flex-direction:column;min-height:0}
+.eg{padding:14px 16px 4px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#6a7482}
+.ei{display:block;width:100%;text-align:left;padding:7px 16px 7px 24px;color:#b5bcc7;border-left:3px solid transparent}.ei:hover{background:#171b22;color:#fff}.ei.on{background:#1b2230;color:#fff;border-left-color:var(--bl)}
+.efoot{margin-top:auto;padding:14px 16px;border-top:1px solid var(--ln);display:flex;align-items:center;gap:10px;color:var(--mu);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase}.efoot .plate{height:38px}.efoot .plate img{height:32px}
+.work{display:flex;flex-direction:column;min-width:0;min-height:0;overflow:hidden}
+.dtabs{display:flex;background:var(--bar);border-bottom:1px solid var(--ln);overflow-x:auto;flex:none}
+.dt{display:flex;align-items:center;border-right:1px solid var(--ln);background:#0f1217;flex:none}.dt.on{background:var(--bg);box-shadow:inset 0 2px 0 var(--bl)}
+.dt>button:first-child{padding:9px 6px 9px 16px;color:#9aa3b0;white-space:nowrap}.dt.on>button:first-child{color:#fff}.dt .x{padding:9px 12px 9px 6px;color:#667080}.dt .x:hover{color:#fff}
+.docs{flex:1;overflow-y:auto;min-height:0}
+.con{grid-column:2;border-top:1px solid var(--ln);background:#090b0e}
+.conh{display:flex;align-items:center;gap:14px;padding:6px 14px;font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mu)}
+.conh button{color:var(--mu);font-weight:500;letter-spacing:.04em;text-transform:none;font-size:12.5px;padding:2px 8px;border-radius:2px}.conh button.on{background:#1f2c40;color:#fff}.conh button:hover{color:#fff}
+.conb{height:190px;overflow-y:auto}.con.min .conb{display:none}
+.log{font-family:"Roboto Mono",ui-monospace,monospace;font-size:12.5px}
+.log div{display:flex;gap:14px;padding:5px 14px;border-bottom:1px solid #161a20}.log div:last-child{border:0}.log .t{color:#657080;white-space:nowrap}.log .k{width:64px;color:#7e8aa0;flex:none}.log .s{color:#5fcf93}.log .e{color:var(--tx)}
+/* pages */
+.tab{display:none}.tab.on{display:block}
+.sec{padding:20px 24px}.in{max-width:1240px}
+.sh{font-size:20px;font-weight:500;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--ln)}
+h3{font-size:14px;font-weight:500}h2{font-weight:500}
+.cols{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px;align-items:start}
+.pnl{background:var(--p);border:1px solid var(--ln);margin-bottom:16px}.pnl>h3{padding:10px 14px;border-bottom:1px solid var(--ln);display:flex;gap:10px;align-items:center}.pad{padding:14px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:10px;margin-bottom:16px}
+.tile{background:var(--p);border:1px solid var(--ln);padding:12px 14px}.tile .k{font-size:11.5px;color:var(--mu);text-transform:uppercase;letter-spacing:.06em}.tile .v{font-size:26px;font-weight:500;line-height:1.25}.tile .d{font-size:12px;color:#6b7482}
+.st4{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:16px}.st4>div{background:var(--p);border:1px solid var(--ln);padding:12px 14px}.st4 b{display:block;font-size:26px;font-weight:500}.st4 span{font-size:11.5px;color:var(--mu);text-transform:uppercase;letter-spacing:.06em}
+.phead{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:14px;background:var(--p);border:1px solid var(--ln);margin-bottom:16px}.phead>div:nth-child(2){flex:1;min-width:200px}.phead h1{font-size:22px;font-weight:500}
+.av{width:34px;height:34px;border-radius:50%;background:#262d38 center/cover;display:grid;place-items:center;font-weight:700;flex:none}.phead .av{width:56px;height:56px;border-radius:4px;background-size:contain;background-repeat:no-repeat}
+table{width:100%;border-collapse:collapse}.tb{background:var(--p);border:1px solid var(--ln)}
+th{font-size:11.5px;font-weight:500;color:var(--mu);text-align:left;padding:8px 14px;background:#12161b;border-bottom:1px solid var(--ln);white-space:nowrap;text-transform:uppercase;letter-spacing:.05em}th.sort{cursor:pointer}th.sort:hover{color:var(--tx)}
+td{padding:9px 14px;border-bottom:1px solid #20262e;vertical-align:middle}tr:last-child td{border-bottom:0}tbody tr:hover td{background:#191e26}tr.sel td{background:#1b2638}tr.nw td{background:#1e2a1f}tr[data-pa]{cursor:pointer}
+.r{text-align:right}.c{text-align:center}
+.tag{display:inline-block;font-size:11.5px;font-weight:500;padding:1px 8px;border-radius:2px;background:#262b33;color:#aab1bb;margin-left:6px}.tag.on{background:#173626;color:#5fcf93;margin:0}
+.rk{display:inline-block;min-width:46px;font-weight:700;color:#cfd6df}
+.cd{background:var(--p);border:1px solid var(--ln);padding:14px;display:grid;gap:10px;align-content:start}.cd h3{text-transform:uppercase;letter-spacing:.06em;font-size:12.5px;color:var(--mu)}.cd code{font-size:14px;color:var(--tx);font-weight:500}
+.cg{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));margin-top:14px}
+.chip{border-bottom:2px solid transparent;padding:5px 2px;margin:0 14px 0 0;font-weight:500;font-size:13px;color:var(--mu)}.chip:hover{color:var(--tx)}.chip.on{color:#fff;border-bottom-color:var(--bl)}
+.tg2,.sw{width:38px;height:20px;background:#3a414b;border-radius:10px;position:relative;display:inline-block;cursor:pointer;flex:none}.tg2.on,.sw.on{background:var(--gn)}
+.tg2::after,.sw::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:.15s}.tg2.on::after,.sw.on::after{left:20px}
+.fm{max-width:600px;display:grid;gap:20px}.fg{max-width:820px;display:grid;gap:16px}.fg .two{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}.form .w{grid-column:1/-1}.hint{font-size:12px;color:var(--mu);margin-top:4px}
+.ck{display:flex;align-items:center;gap:8px}.ck label{text-transform:none;letter-spacing:0;font-size:14px;color:var(--tx);margin:0;font-weight:400}
+.filters{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;padding:12px 14px;border-bottom:1px solid var(--ln)}.filters>div{min-width:150px}
+.pager{display:flex;align-items:center;gap:10px;padding:10px 14px;border-top:1px solid var(--ln);font-size:13px;color:var(--mu)}
+.seg{display:inline-flex;border:1px solid #3a414b;border-radius:3px;overflow:hidden}.seg button{padding:5px 14px;color:var(--mu)}.seg button.on{background:#273244;color:#fff}
+.chart{display:flex;align-items:flex-end;gap:5px;height:150px;border-bottom:1px solid var(--ln)}.chart i{flex:1;background:#2f6db8;min-height:2px;display:block}.chart i:hover{background:#5a9be0}
+.ax{display:flex;gap:5px;margin-top:5px}.ax span{flex:1;text-align:center;font-size:11px;color:var(--mu)}
+.lead div{display:grid;grid-template-columns:22px 1fr 80px;gap:10px;align-items:center;padding:7px 14px;border-bottom:1px solid #20262e}.lead div:last-child{border:0}.lead u{display:block;height:5px;background:#2f6db8;margin-top:4px}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px}.kv b{display:block;font-size:17px;font-weight:500}
+.heat{text-align:center;font-variant-numeric:tabular-nums}.heat.z{color:#4a525d}
+/* messages */
+.chat{display:grid;grid-template-columns:240px minmax(0,1fr);grid-template-rows:minmax(0,1fr);border:1px solid var(--ln);height:calc(100vh - 400px);min-height:360px;background:var(--p);overflow:hidden}
+.side{min-height:0;overflow-y:auto;background:#12161b;border-right:1px solid var(--ln);padding:6px 0}
+.side h3{font-size:11px;color:var(--mu);margin:12px 14px 5px;text-transform:uppercase;letter-spacing:.1em}
+.side button{display:block;width:100%;text-align:left;padding:6px 14px;color:#b5bcc7;border-left:3px solid transparent}.side button:hover{background:#181d24}.side button.on{background:#1b2230;color:#fff;border-left-color:var(--bl)}.side button.un{font-weight:700;color:#fff}
+.cm{display:flex;flex-direction:column;min-width:0;min-height:0;position:relative}
+.chh{padding:10px 14px;border-bottom:1px solid var(--ln);font-weight:500}
+.msgs{flex:1 1 0;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:6px 4px}
+.msg{display:flex;gap:11px;padding:5px 12px;position:relative}.msg:hover{background:#191e26}
+.msg .b{flex:1;min-width:0;word-break:break-word}.msg .n{font-weight:500}.msg small{color:var(--mu);margin-left:8px;font-size:11px;font-weight:400}
+.msg .av{background-size:cover;background-position:center}.msg.g{padding-top:1px;padding-bottom:1px}.msg.g .av{visibility:hidden;height:0}.msg.g .n{display:none}
+.rp{font-size:12px;color:var(--mu);border-left:3px solid var(--bl);padding-left:8px}
+.act{position:absolute;right:12px;top:-12px;display:none;background:var(--p2);border:1px solid var(--ln)}.msg:hover .act{display:flex}.act button{padding:4px 9px;font-size:12px;color:var(--blue)}.act button:hover{background:#262d38}
+.rx{display:inline-block;border:1px solid var(--ln);background:#1c212a;border-radius:10px;padding:0 8px;margin:4px 4px 0 0;font-size:13px;cursor:pointer}
+.comp{padding:10px 14px;border-top:1px solid var(--ln)}#rbar{font-size:12px;color:var(--mu)}.comp textarea{resize:none;max-height:140px;min-height:38px;line-height:1.4}
+#jump{position:absolute;left:50%;bottom:88px;transform:translateX(-50%);z-index:3;background:var(--bl);color:#fff;padding:6px 14px;font-size:12px;font-weight:500}
+.bdg{float:right;background:var(--bl);color:#fff;border-radius:9px;padding:0 7px;font-size:11px;font-weight:700}
+.dd{display:flex;align-items:center;gap:12px;margin:12px 10px 5px;color:var(--mu);font-size:11px;text-transform:uppercase;letter-spacing:.06em}.dd::before,.dd::after{content:"";flex:1;height:1px;background:var(--ln)}
+.msg pre{background:#0e1115;border:1px solid var(--ln);padding:8px 10px;margin:4px 0;white-space:pre-wrap;overflow-x:auto;font-size:12.5px}.msg code{background:#0e1115;padding:1px 5px;font-size:12.5px}.msg a{color:var(--blue)}
+.ce{height:22px;vertical-align:middle}.att{max-width:min(380px,100%);max-height:300px;display:block;margin-top:6px;border:1px solid var(--ln)}
+.emb{border-left:4px solid var(--bl);background:#12161b;padding:9px 12px;margin-top:6px;max-width:520px;font-size:13.5px}.emb .et{font-weight:700;margin-bottom:4px}.ef{margin-top:6px}
+.chip2{border:1px solid var(--ln);padding:2px 8px;font-size:12px;margin:0 6px 4px 0;display:inline-block;background:#1c212a}
+.au img{width:22px;height:22px;border-radius:50%;vertical-align:middle;margin-right:8px}
+.rb{width:72px;height:24px;border:1px solid rgba(255,255,255,.3);display:inline-block;flex:none;vertical-align:middle}
+.rack{display:flex;flex-direction:column;align-items:center;gap:3px;background:#12161b;padding:14px;border:1px solid var(--ln);width:max-content}.rack>div{display:flex;gap:3px}.rack .rb{width:88px;height:29px}
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.6);display:grid;place-items:center;z-index:80;padding:20px}
+.mo>div{background:var(--p);border:1px solid var(--ln);padding:22px;width:100%;max-width:420px;display:grid;gap:14px}.mo>div.wide{max-width:520px}
+#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#252b34;color:#fff;padding:10px 18px;border-radius:3px;border-left:3px solid var(--bl);z-index:90;opacity:0;transition:.2s;pointer-events:none}#toast.on{opacity:1}
+#mbtn{display:none}
+@media(max-width:900px){.wb{grid-template-columns:1fr}.exp{position:fixed;left:0;top:52px;bottom:0;width:250px;z-index:70;transform:translateX(-100%);transition:.2s}.exp.open{transform:none}#mbtn{display:inline-flex}.con{grid-column:1}.cols{grid-template-columns:1fr}.jump,.zt{display:none}.wm{font-size:13px}.sec{padding:16px 12px}.chat{grid-template-columns:1fr;grid-template-rows:130px minmax(0,1fr)}.side{border-right:0;border-bottom:1px solid var(--ln)}td,th{padding:8px 10px}}
+
+/* AFSFA-style site frame */
+.wb{display:block;height:auto;overflow:visible}
+.exp,.dtabs{display:none!important}
+.work{display:block;overflow:visible}.docs{overflow:visible}
+.util{display:flex;gap:18px;align-items:center;padding:6px 20px;background:#06080b;border-bottom:1px solid var(--ln);font-size:12.5px;color:var(--mu)}
+.util button{color:#aeb7c4}.util button:hover{color:#fff}
+.util .jump{margin-left:8px}
+.hdr{display:flex;align-items:center;gap:18px;padding:16px 20px;background:linear-gradient(#131d31,#0c1424);border-bottom:3px solid #b8962e;cursor:pointer}
+.hdr .plate{height:72px;padding:4px 9px}.hdr .plate img{height:62px}
+.hdr .wm{font-size:30px;letter-spacing:.16em}.hdr .sub{font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:#c9a94b;margin-top:3px}
+.mnu{display:flex;flex-wrap:wrap;background:#0a0f19;border-bottom:1px solid var(--ln);padding:0 12px;position:sticky;top:0;z-index:55}
+.mg{position:relative}.mg>button{padding:13px 18px;text-transform:uppercase;letter-spacing:.1em;font-weight:600;font-size:12.5px;color:#cfd6e2}
+.mg>button:hover,.mg.open>button{color:#fff;background:#141c2d}.mg.on>button{color:#fff;box-shadow:inset 0 -3px 0 #b8962e}
+.dd{display:none;position:absolute;left:0;top:100%;min-width:220px;background:#0f1522;border:1px solid var(--ln);border-top:2px solid #b8962e;box-shadow:0 12px 26px #000b;z-index:60}
+.mg:hover>.dd,.mg.open>.dd{display:block}
+.dd button{display:block;width:100%;text-align:left;padding:10px 18px;color:#c3cad6;font-size:13.5px}.dd button:hover,.dd button.on{background:#1a2438;color:#fff}
+.crumb{padding:10px 24px;font-size:12.5px;color:var(--mu);border-bottom:1px solid var(--ln);background:#090c11}.crumb b{color:#fff;font-weight:500}.crumb i{font-style:normal;margin:0 7px;color:#b8962e}
+.chat{height:calc(100vh - 330px)}
+.foot{border-top:3px solid #b8962e;background:#080b10;padding:22px 24px;display:flex;gap:24px;flex-wrap:wrap;justify-content:space-between;font-size:12.5px;color:var(--mu)}
+.foot p{margin:0 0 6px;max-width:640px}.foot .plate{height:44px}.foot .plate img{height:36px}.foot button{color:#c9a94b}
+.lwrap{width:100%;max-width:460px}.lwrap .hdr{border:1px solid var(--ln);border-bottom:3px solid #b8962e;cursor:default}
+.lwrap .lbox{border-top:0;max-width:none}.lbox h2{margin:0 0 14px;font-size:15px;letter-spacing:.12em;text-transform:uppercase;color:#c9a94b}
+.rem{display:flex;align-items:center;gap:8px;margin:2px 0 14px;font-size:13px;color:var(--mu);text-transform:none;letter-spacing:0}
+.lcr{font-size:12.5px;color:var(--mu);margin-bottom:12px}.lcr i{font-style:normal;margin:0 6px;color:#b8962e}
+#mbtn{display:none}
+@media(max-width:900px){#mbtn{display:inline-flex}.mnu{display:none;flex-direction:column}.mnu.open{display:flex}.dd{position:static;display:block;border:0;box-shadow:none;background:#0c121d}.mg>button{width:100%;text-align:left}.hdr .wm{font-size:20px}.hdr .plate{height:52px}.hdr .plate img{height:44px}.util .jump{display:none}.chat{height:70vh}}
+</style>
+<script>function imgFb(i){if(i.dataset.r&&!i.dataset.t){i.dataset.t=1;i.referrerPolicy="no-referrer";i.src=i.dataset.r}else if(i.parentNode)i.parentNode.remove()}</script>
+</head><body>
+<div id="login"><div class="lwrap">
+ <div class="hdr"><span class="plate"><img src="img/af_sf_logo.png" data-r="https://afsfaonline.com/images/logos/af_sf_logo.png" alt="Air Force Security Forces" referrerpolicy="no-referrer" onerror="imgFb(this)"></span><div><div class="wm">Security Forces</div><div class="sub">Defensor Fortis</div></div></div>
+ <div class="lbox"><div class="lcr">You are here: Home <i>&rsaquo;</i> Login</div><h2>Site Login</h2>
+ <div class="f1"><label>Username</label><input id="u" autocomplete="username" autocapitalize="none" spellcheck="false"></div>
+ <div class="f1"><label>Password</label><input id="p" type="password" autocomplete="current-password"></div>
+ <label class="rem"><input type="checkbox" id="rm"> Remember me</label>
+ <div class="err" id="err"></div><button class="nb" id="go" style="width:100%">Log in</button>
+ </div></div></div>
+
+<div id="app" class="wb hidden">
+ <div class="util"><button id="mbtn">Menu</button><button data-go="home">Home</button><button data-go="cmds">Sitemap</button><div class="jump"><input id="jq" placeholder="Search pages ( / )" autocomplete="off"><div class="jpal hidden" id="jpal"></div></div><span class="sp"></span><span class="zt" id="zt"></span><span class="stt" id="hp"></span><span id="bn" class="hidden"></span><button id="out">Log out</button></div>
+ <div class="hdr" data-go="home"><span class="plate"><img src="img/af_sf_logo.png" data-r="https://afsfaonline.com/images/logos/af_sf_logo.png" alt="Air Force Security Forces" referrerpolicy="no-referrer" onerror="imgFb(this)"></span><div><div class="wm">Security Forces</div><div class="sub">Defensor Fortis</div></div><span class="sp"></span><span class="plate"><img src="img/sf_beret_w_flash.png" data-r="https://afsfaonline.com/images/logos/sf_beret_w_flash.png" alt="Security Forces beret flash" referrerpolicy="no-referrer" onerror="imgFb(this)"></span></div>
+ <nav class="mnu" id="mnu"></nav>
+ <div class="crumb" id="crumb"></div>
+ <aside class="exp" id="exp"></aside>
+ <main class="work"><div class="dtabs" id="dtabs"></div><div class="docs" id="docs">
+<div class="tab on" id="t-home"><div class="sec"><div class="in"><h2 class="sh">Overview</h2>
+ <div class="tiles" id="ptiles"></div>
+ <div class="cols"><div>
+  <div class="pnl"><h3>On patrol now</h3><div id="pboard"></div></div>
+  <div class="pnl"><h3>Patrol hours per day <span class="mu">last 14 days</span></h3><div class="pad" id="pchart"></div></div>
+ </div><div>
+  <div class="pnl"><h3>Event log</h3><div class="log" id="pevents"></div></div>
+  <div class="pnl"><h3>Most patrol time <span class="mu">last 7 days</span></h3><div class="lead" id="ptop"></div></div>
+ </div></div></div>
+ <div class="sec" style="padding-top:0"><div class="in"><h2 class="sh">Bot</h2></div></div>
+ <div class="sec" style="padding-bottom:0"><div class="in"><div class="phead"><div class="av" id="hav"></div><div><div class="mu f" id="tg"></div><h1 id="hn"></h1><div class="mu" id="hud"></div></div><button class="nb" data-go="comms">Open messages</button></div></div></div>
+ <div class="sec"><div class="in"><h2 class="sh">Overview</h2><div class="st4"><div><b id="s1">-</b><span class="f">Servers</span></div><div><b id="s2">-</b><span class="f">Total members</span></div><div><b id="s3">-</b><span class="f">Chat commands</span></div><div><b id="s5">-</b><span class="f">Open DMs</span></div></div></div></div>
+ <div class="sec ch"><div class="in"><h2 class="sh">Presence</h2>
+  <div class="row" style="margin-bottom:26px" id="stb"><button class="sb f" data-s="online"><i class="dot online"></i>Online</button><button class="sb f" data-s="idle"><i class="dot idle"></i>Idle</button><button class="sb f" data-s="dnd"><i class="dot dnd"></i>Do not disturb</button><button class="sb f" data-s="invisible"><i class="dot offline"></i>Offline</button></div>
+  <div class="row"><select id="at" style="width:190px"><option>Playing</option><option>Listening</option><option>Watching</option><option>Competing</option></select><input id="ax" style="flex:1;min-width:220px" placeholder="Activity text"><button class="nb s" id="aset">Apply</button><button class="nb s d" id="aclr">Clear</button></div></div></div>
+
+</div></div>
+<div class="tab" id="t-plog"></div><div class="tab" id="t-ptime"></div><div class="tab" id="t-preport"></div>
+<div class="tab" id="t-srv"><div class="sec"><div class="in"><h2 class="sh">Servers</h2><table class="tb" id="tb"></table><div style="text-align:center;margin-top:24px"><button class="nb" id="sinv">Add bot to a server</button></div></div></div></div>
+
+<div class="tab" id="t-comms"><div class="sec"><div class="in"><h2 class="sh">Messages</h2>
+ <div class="chat"><div class="side" id="side"></div><div class="cm"><div class="chh f" id="chh">No channel selected</div><div class="msgs" id="msgs"></div><button id="jump" class="hidden">Jump to latest</button>
+ <div class="comp"><div id="rbar"></div><div id="fchips"></div><div class="row" style="flex-wrap:nowrap;align-items:flex-end"><input type="file" id="fi" multiple class="hidden"><button class="nb s" id="att">Attach</button><textarea id="mi" rows="1" placeholder="Message as the bot (Enter to send, Shift+Enter for a new line)" style="flex:1"></textarea><button class="nb s" id="send">Send</button></div></div></div></div></div></div></div>
+
+<div class="tab" id="t-mem"><div class="sec"><div class="in"><h2 class="sh">Members</h2>
+ <div class="row" style="margin-bottom:14px"><select id="ms" style="width:240px"></select><input id="mq" placeholder="Search members" style="flex:1;min-width:200px"><button class="nb s" id="mre">Reload</button></div>
+ <table class="tb" id="mt"></table><h2 class="sh" style="margin-top:56px">Ban list</h2><table class="tb" id="bt"></table></div></div></div>
+
+<div class="tab" id="t-cases"><div class="sec"><div class="in"><h2 class="sh">Moderation cases</h2>
+ <div class="row" style="margin-bottom:14px"><select id="cs" style="width:240px"></select><select id="ct" style="width:170px"><option value="">All types</option></select><input id="cq2" placeholder="Search user, moderator or reason" style="flex:1;min-width:200px"></div><table class="tb" id="ctb"></table></div></div></div>
+
+<div class="tab" id="t-audit"><div class="sec"><div class="in"><h2 class="sh">Audit log</h2>
+ <div class="row" style="margin-bottom:14px"><select id="as" style="width:240px"></select><select id="at2" style="width:230px"><option value="">All actions</option></select><input id="aq" placeholder="Search who, target or reason" style="flex:1;min-width:200px"></div>
+ <table class="tb" id="atb"></table><div style="text-align:center;margin-top:20px"><button class="nb hidden" id="amore">Load older</button></div></div></div></div>
+
+<div class="tab" id="t-tickets"><div class="sec"><div class="in"><h2 class="sh">Tickets</h2>
+ <div class="row" style="margin-bottom:14px"><select id="ks" style="width:240px"></select><button class="nb s" id="kre">Reload</button></div>
+ <table class="tb" id="ktb"></table></div></div></div>
+
+<div class="tab" id="t-awards"><div class="sec"><div class="in"><h2 class="sh">Awards</h2>
+ <div class="row" style="margin-bottom:18px"><select id="wg" style="width:240px"></select><button class="nb s" id="wre">Reload</button></div>
+ <h3 class="f" style="margin-bottom:12px">Award catalog</h3>
+ <div class="cd" style="margin-bottom:14px">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px">
+   <div><label>Name</label><input id="an" placeholder="Service Excellence Ribbon"></div><div><label>Short name</label><input id="ab" maxlength="12" placeholder="SER"></div>
+   <div><label>Order (1 = highest)</label><input id="ao" type="number" min="1"></div><div><label>Role given with it (optional)</label><select id="ar"></select></div></div>
+  <div><label>Description</label><input id="ad" maxlength="200"></div>
+  <div><label>Ribbon stripes, left to right</label><div class="row" id="acs" style="margin-top:6px"></div><div class="row" style="margin-top:8px"><button class="nb s" id="acadd">Add stripe</button><button class="nb s d" id="acrem">Remove stripe</button><span class="mu">Preview</span><span class="rb" id="apv" style="width:96px;height:32px"></span></div></div>
+  <div class="row"><button class="nb s" id="asave">Save award</button><button class="nb s d hidden" id="acan">Cancel edit</button></div></div>
+ <table class="tb" id="atb2"></table>
+ <h3 class="f" style="margin:30px 0 12px">Member awards and uniform</h3>
+ <div class="row" style="margin-bottom:14px"><select id="wm" style="width:300px"></select></div>
+ <div class="cd" id="wbox"></div></div></div></div>
+
+<div class="tab" id="t-rbx"><div class="sec"><div class="in"><h2 class="sh">Roblox lookup</h2>
+ <div class="row" style="margin-bottom:20px"><input id="rq" placeholder="Roblox username or user ID" style="flex:1;min-width:220px"><button class="nb" id="rgo">Look up</button></div><div id="rout"></div></div></div></div>
+
+<div class="tab" id="t-cmds"><div class="sec"><div class="in"><h2 class="sh">Chat commands</h2>
+ <div class="row" style="margin-bottom:14px"><select id="cgs" style="width:240px"></select><input id="cq" placeholder="Search commands" style="flex:1;min-width:200px"></div><div class="row" id="cf" style="margin-bottom:8px"></div><div class="cg" id="cg"></div></div></div></div>
+
+<div class="tab" id="t-tools"><div class="sec"><div class="in"><h2 class="sh">Channel tools</h2><div class="cg" style="margin-top:0">
+ <div class="cd" id="cpn"><h3 class="f">Manage a channel</h3><select id="tc"></select><input id="tv" placeholder="Value (amount, seconds, or name)"><div class="row"><button class="nb s" data-b="purge">Purge</button><button class="nb s" data-b="slowmode">Slowmode</button><button class="nb s" data-b="lock">Lock</button><button class="nb s" data-b="unlock">Unlock</button><button class="nb s" data-b="rename">Rename</button><button class="nb s" data-b="topic">Set topic</button><button class="nb s" data-b="create">Create channel</button><button class="nb s d" data-b="delete">Delete</button></div></div>
+ <div class="cd" id="apn"><h3 class="f">Send an announcement</h3><select id="ac"></select><input id="atl" placeholder="Title"><textarea id="ads" rows="3" placeholder="Message" style="width:100%"></textarea><input id="acl" placeholder="Color (hex, e.g. #2b3a67)"><div class="row"><button class="nb s" data-b="embed">Send as embed</button><button class="nb s" data-b="plain">Send as plain text</button></div></div>
+</div></div></div></div>
+
+<div class="tab" id="t-set"><div class="sec"><div class="in"><div id="psetbox"></div><h2 class="sh">Server settings</h2><div class="fg"><select id="sgs"></select><div class="two" id="sform"></div>
+ <h3 class="f" style="margin-top:16px">Reason templates (one per line)</h3><div class="two" id="tform"></div>
+ <h3 class="f" style="margin-top:16px">Direct messages sent to members</h3><div class="two" id="dform"></div>
+ <div><button class="nb" id="ssave">Save settings</button></div></div></div></div></div>
+
+<div class="tab" id="t-id"><div class="sec"><div class="in"><h2 class="sh">Bot identity</h2><div class="fm">
+ <div class="row" style="gap:24px"><div class="av" id="pav" style="width:110px;height:110px"></div><div><input type="file" id="pf" accept="image/*" class="hidden"><button class="nb s" onclick="pf.click()">Change avatar</button></div></div>
+ <div><label class="mu">Username</label><input id="pn"></div><div><label class="mu">Bio (application description)</label><textarea id="pb" rows="4" maxlength="400"></textarea></div>
+ <div><button class="nb" id="psave">Save</button></div></div></div></div></div>
+
+
+
+ </div></main>
+ <section class="con" id="con"><div class="conh">Live log <button data-cf="all" class="on">All</button><button data-cf="patrol">Patrol</button><button data-cf="mod">Moderation</button><button data-cf="audit">Audit</button><span class="sp"></span><button id="conT">Hide</button></div><div class="conb log" id="conb"></div></section>
+<footer class="foot"><div><p><b>&copy; Security Forces 2026</b> &nbsp; <button id="top">Back to top</button></p><p>Security Forces is a Roblox unit. This site is a private management console for its Discord bot and is not affiliated with or endorsed by the U.S. Air Force or the Air Force Security Forces Association.</p><p class="mu">Patrol times are recorded in game and shown in Zulu (UTC) unless set otherwise in Settings.</p></div><span class="plate"><img src="img/sf_beret_w_flash.png" data-r="https://afsfaonline.com/images/logos/sf_beret_w_flash.png" alt="Security Forces beret flash" referrerpolicy="no-referrer" onerror="imgFb(this)"></span></footer>
+
+</div>
+
+<div class="mo hidden" id="fmo"><div><h3>Forward message</h3><div class="mu" id="fp"></div><select id="fs"></select><div class="row"><button class="nb s" id="fg">Forward</button><button class="nb s d" id="fx">Cancel</button></div></div></div>
+<div class="mo hidden" id="mmo"><div class="wide"><h3 id="mtl"></h3><div class="mu" id="mwho"></div><div><label class="mu">Reason template</label><select id="mtp"></select></div><div><label class="mu">Reason</label><textarea id="mr" rows="3" style="width:100%"></textarea></div><div id="mx"></div><div class="row"><button class="nb s" id="mok">Confirm</button><button class="nb s d" id="mno">Cancel</button></div></div></div>
+<div id="toast"></div>
+<script>
+
+const BACKEND=""; // after the bot is deployed, put its Render address between the quotes, like "https://afsf-bot.onrender.com"
+const $=i=>document.getElementById(i),esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const toast=t=>{const e=$("toast");e.textContent=t;e.classList.add("on");clearTimeout(toast.h);toast.h=setTimeout(()=>e.classList.remove("on"),2400)};
+const ls=(k,v)=>{try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){}};
+const API=BACKEND.trim().replace(/\/+$/,"");let TOK="";try{TOK=sessionStorage.getItem("sf-tok")||""}catch(e){}
+const S={open:["home"],audit:[],auditEnd:false,auditTypes:null,me:null,guilds:[],dms:[],cur:null,reply:null,msgs:[],members:[],roles:[],bans:[],cfg:{},cmds:[],cases:[],tab:"home",filled:false,av:null,unread:{},files:[],noMore:false,stick:true,newc:0,es:null,cat:""};
+let fw=null,mod=null;
+
+/* ---------- design preview: sample data stands in for the bot ---------- */
+const SAMPLE={"cmds":[{"n":"kick","c":"Moderation","u":"<user> [reason]","d":1},{"n":"ban","c":"Moderation","u":"<user> [-d days] [reason]","d":2},{"n":"softban","c":"Moderation","u":"<user> [reason]","d":2},{"n":"warn","c":"Moderation","u":"<user> [reason]","d":1},{"n":"unban","c":"Moderation","u":"<user> [reason]","d":2},{"n":"untimeout","c":"Moderation","u":"<user> [reason]","d":1},{"n":"unmute","c":"Moderation","u":"<user> [reason]","d":1},{"n":"timeout","c":"Moderation","u":"<user> <duration> [reason]","d":1},{"n":"mute","c":"Moderation","u":"<user> [duration] [reason]","d":1},{"n":"tempban","c":"Moderation","u":"<user> <duration> [reason]","d":2},{"n":"note","c":"Moderation","u":"<user> <text>","d":1},{"n":"notes","c":"Moderation","u":"<user>","d":1},{"n":"warnings","c":"Moderation","u":"<user>","d":1},{"n":"clearwarnings","c":"Moderation","u":"<user>","d":2},{"n":"purge","c":"Moderation","u":"<1-100> [user]","d":1},{"n":"slowmode","c":"Moderation","u":"<seconds|off>","d":1},{"n":"lock","c":"Moderation","u":"[#channel]","d":1},{"n":"unlock","c":"Moderation","u":"[#channel]","d":1},{"n":"lockdown","c":"Moderation","u":"","d":2},{"n":"unlockdown","c":"Moderation","u":"","d":2},{"n":"nickname","c":"Moderation","u":"<user> <nickname|reset>","d":1},{"n":"massban","c":"Moderation","u":"<id> <id> ... [reason]","d":2},{"n":"banlist","c":"Moderation","u":"","d":2},{"n":"case","c":"Moderation","u":"<number>","d":1},{"n":"modlogs","c":"Moderation","u":"<user>","d":1},{"n":"templates","c":"Moderation","u":"[ban|unban|kick|timeout|warn]","d":0},{"n":"role add","c":"Roles","u":"<user> <role>","d":2},{"n":"role remove","c":"Roles","u":"<user> <role>","d":2},{"n":"role create","c":"Roles","u":"<name> [#hex]","d":2},{"n":"role delete","c":"Roles","u":"<role>","d":2},{"n":"role info","c":"Roles","u":"<role>","d":0},{"n":"roleinfo","c":"Utility","u":"<role>","d":0},{"n":"roles","c":"Roles","u":"","d":0},{"n":"autorole","c":"Roles","u":"<role|off>","d":2},{"n":"rolecolor","c":"Roles","u":"<role> <#hex>","d":2},{"n":"rolemembers","c":"Roles","u":"<role>","d":1},{"n":"temprole","c":"Roles","u":"<user> <role> <duration>","d":2},{"n":"channel create","c":"Channels","u":"<name>","d":2},{"n":"channel delete","c":"Channels","u":"[#channel]","d":2},{"n":"channel clone","c":"Channels","u":"[#channel]","d":2},{"n":"channel rename","c":"Channels","u":"[#channel] <name>","d":2},{"n":"channel topic","c":"Channels","u":"[#channel] <topic>","d":1},{"n":"channel info","c":"Channels","u":"[#channel]","d":0},{"n":"channelinfo","c":"Utility","u":"[#channel]","d":0},{"n":"category create","c":"Channels","u":"<name>","d":2},{"n":"nuke","c":"Channels","u":"","d":2},{"n":"hide","c":"Channels","u":"[#channel]","d":1},{"n":"unhide","c":"Channels","u":"[#channel]","d":1},{"n":"help","c":"Utility","u":"[command]","d":0},{"n":"ping","c":"Utility","u":"","d":0},{"n":"uptime","c":"Utility","u":"","d":0},{"n":"invite","c":"Utility","u":"","d":0},{"n":"botinfo","c":"Utility","u":"","d":0},{"n":"serverinfo","c":"Utility","u":"","d":0},{"n":"membercount","c":"Utility","u":"","d":0},{"n":"userinfo","c":"Utility","u":"[user]","d":0},{"n":"whois","c":"Utility","u":"[user]","d":0},{"n":"avatar","c":"Utility","u":"[user]","d":0},{"n":"banner","c":"Utility","u":"[user]","d":0},{"n":"emojis","c":"Utility","u":"","d":0},{"n":"boosters","c":"Utility","u":"","d":0},{"n":"snipe","c":"Utility","u":"","d":1},{"n":"editsnipe","c":"Utility","u":"","d":1},{"n":"announce","c":"Messaging","u":"<#channel> <text>","d":2},{"n":"say","c":"Messaging","u":"<text>","d":2},{"n":"embed","c":"Messaging","u":"<title> | <description> [| #hex]","d":2},{"n":"dm","c":"Messaging","u":"<user> <text>","d":2},{"n":"dmrole","c":"Messaging","u":"<role> <text>","d":2},{"n":"poll","c":"Messaging","u":"<question> | <option> | <option>...","d":0},{"n":"suggest","c":"Messaging","u":"<text>","d":0},{"n":"remind","c":"Messaging","u":"<duration> <text>","d":0},{"n":"reminders","c":"Messaging","u":"","d":0},{"n":"pin","c":"Messaging","u":"(reply to a message)","d":1},{"n":"unpin","c":"Messaging","u":"(reply to a message)","d":1},{"n":"schedule","c":"Messaging","u":"<duration> <#channel> <text>","d":2},{"n":"quote","c":"Messaging","u":"(reply to a message)","d":0},{"n":"report","c":"Tickets","u":"<user> <reason>","d":0},{"n":"verify","c":"Anti-Raid","u":"","d":0},{"n":"setupverify","c":"Anti-Raid","u":"<role>","d":2},{"n":"antilink","c":"Anti-Raid","u":"<on|off>","d":2},{"n":"antispam","c":"Anti-Raid","u":"<on|off>","d":2},{"n":"automod","c":"Anti-Raid","u":"<on|off>","d":2},{"n":"raidmode","c":"Anti-Raid","u":"<on|off>","d":2},{"n":"antiraid","c":"Anti-Raid","u":"<on|off>","d":2},{"n":"joingate","c":"Anti-Raid","u":"<min account age in days|off>","d":2},{"n":"blacklist word","c":"Anti-Raid","u":"<word>","d":2},{"n":"whitelist link","c":"Anti-Raid","u":"<domain>","d":2},{"n":"setlogchannel","c":"Config","u":"<#channel>","d":2},{"n":"setwelcome","c":"Config","u":"<#channel> <message> ({user} {server} {count})","d":2},{"n":"setleave","c":"Config","u":"<message> ({user} {server})","d":2},{"n":"setprefix","c":"Config","u":"<prefix>","d":2},{"n":"setmodrole","c":"Config","u":"<role>","d":3},{"n":"setadminrole","c":"Config","u":"<role>","d":3},{"n":"config","c":"Config","u":"","d":2},{"n":"resetconfig","c":"Config","u":"","d":3},{"n":"permissions","c":"Config","u":"[command] [everyone|mod|admin|owner]","d":2},{"n":"disable","c":"Config","u":"<command>","d":2},{"n":"enable","c":"Config","u":"<command>","d":2},{"n":"ticket panel","c":"Tickets","u":"","d":2},{"n":"ticket open","c":"Tickets","u":"[reason]","d":0},{"n":"ticket close","c":"Tickets","u":"[reason] (staff or the ticket owner)","d":0},{"n":"ticket add","c":"Tickets","u":"<user>","d":1},{"n":"ticket remove","c":"Tickets","u":"<user>","d":1},{"n":"ticket claim","c":"Tickets","u":"","d":1},{"n":"ticket transcript","c":"Tickets","u":"","d":1},{"n":"ticket types","c":"Tickets","u":"<type> | <type> | <type> (up to 4)","d":2},{"n":"ticket category","c":"Tickets","u":"<category ID>","d":2},{"n":"tickets","c":"Tickets","u":"","d":1},{"n":"profile","c":"Roblox","u":"<roblox username | user ID | @discord user>","d":0},{"n":"robloxinfo","c":"Roblox","u":"[roblox username | user ID | @discord user]","d":0},{"n":"groups","c":"Roblox","u":"<roblox username | user ID>","d":0},{"n":"games","c":"Roblox","u":"<roblox username | user ID>","d":0},{"n":"game","c":"Roblox","u":"<game link | place ID | universe ID>","d":0},{"n":"group","c":"Roblox","u":"[group ID or link]","d":0},{"n":"getrank","c":"Roblox","u":"<roblox username | user ID | @discord user> [group ID]","d":0},{"n":"setrobloxgroup","c":"Roblox","u":"<group ID>","d":2},{"n":"verify roblox","c":"Roblox","u":"<roblox username>, then: verify roblox done","d":0},{"n":"unlink roblox","c":"Roblox","u":"","d":0}],"cfg":{"prefix":".","modRole":null,"adminRole":null,"logChannel":null,"welcomeChannel":null,"welcomeMsg":"Welcome {user} to {server}! You are member #{count}.","leaveMsg":"{user} left {server}.","autorole":null,"verifyRole":null,"supportRole":null,"suggestChannel":null,"antilink":false,"antispam":false,"automod":false,"raidmode":false,"joingate":0,"dmOnAction":true,"badwords":[],"linkAllow":[],"disabled":[],"perms":{},"ticketCategory":null,"ticketTypes":["Support","Report a player","Ban appeal","Other"],"appealText":"","robloxGroupId":"","dmTpl":{},"templates":{"ban":["Breaking server rules","Harassment or hate speech","Spamming or advertising","Raiding or trolling","Ban evasion","Posting inappropriate content"],"unban":["Appeal accepted","Ban was a mistake","Time served"],"kick":["Breaking server rules","Inactive or suspicious account","Disruptive behavior"],"timeout":["Spamming","Arguing or disrespect","Cool down"],"warn":["Breaking server rules","Be respectful","Stay on topic"]}},"dm":{"ban":{"title":"You were banned from {server}","desc":"**Reason:** {reason}\n**Moderator:** {moderator}\n**Case:** #{case}\n\n{appeal}"},"tempban":{"title":"You were temporarily banned from {server}","desc":"**Reason:** {reason}\n**Duration:** {duration}\n**Moderator:** {moderator}\n**Case:** #{case}\n\n{appeal}"},"softban":{"title":"You were softbanned from {server}","desc":"Your recent messages were removed. You can rejoin right away.\n**Reason:** {reason}\n**Case:** #{case}"},"kick":{"title":"You were kicked from {server}","desc":"**Reason:** {reason}\n**Moderator:** {moderator}\n**Case:** #{case}"},"timeout":{"title":"You were timed out in {server}","desc":"**Reason:** {reason}\n**Duration:** {duration}\n**Moderator:** {moderator}\n**Case:** #{case}"},"warn":{"title":"You were warned in {server}","desc":"**Reason:** {reason}\n**Moderator:** {moderator}\n**Total warnings:** {warnings}\n**Case:** #{case}"},"unban":{"title":"You were unbanned from {server}","desc":"**Reason:** {reason}\n{invite}"},"untimeout":{"title":"Your timeout was removed in {server}","desc":"**Reason:** {reason}"},"ticketClosed":{"title":"Your ticket was closed in {server}","desc":"**Ticket:** #{ticket}\n**Closed by:** {moderator}\n**Reason:** {reason}\nA transcript is attached."}}};
+const NOW=Date.now(),MIN=6e4,HR=36e5,DAY=864e5;
+const AVC=["#1d4fb8","#c8102e","#2e9e5b","#7a5af8","#d9822b","#0e7c86"];
+const AV=(n,i)=>"data:image/svg+xml;utf8,"+encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect width='64' height='64' fill='${AVC[i%AVC.length]}'/><text x='32' y='43' font-size='30' font-family='Arial,sans-serif' font-weight='700' text-anchor='middle' fill='white'>${n[0].toUpperCase()}</text></svg>`).replace(/'/g,"%27");
+const PEOPLE=["Airman_Reyes","SSgt_Holloway","TSgt_Becker","A1C_Nguyen","Lt_Marsh","Capt_Okafor","SrA_Dalton","MSgt_Vance","A1C_Whitaker","SrA_Castillo"];
+let MID=1000;
+const mk=(ch,a,text,ago,o)=>Object.assign({id:String(++MID),ch,author:PEOPLE[a],authorId:"u"+a,avatar:AV(PEOPLE[a],a),color:["#5b8def","#e0a458","#59c3a2",null][a%4],bot:false,self:false,content:text,time:NOW-ago*MIN,edited:false,pinned:false,reactions:[],reply:null,attachments:[],embeds:[]},o||{});
+const botm=(ch,text,ago,o)=>Object.assign(mk(ch,0,text,ago),{author:"Security Forces",authorId:"bot",avatar:AV("E",0),color:null,bot:true,self:true},o||{});
+const g1=mk("c3",1,"Morning everyone. Briefing is at 1900 tonight.",190),g2=mk("c3",3,"Copy, I'll be there.",185,{reply:g1.id,reactions:[{emoji:"👍",count:3}]}),g3=mk("c3",6,"Is the new training schedule posted?",120),g4=mk("c3",4,"Yes, it's pinned in #announcements.",118,{reply:g3.id});
+const MOCKMSG={
+ c1:[botm("c1","",300,{embeds:[{title:"Welcome to the Security Forces server",description:"Read #rules, then say hello in #general. Open a ticket in #support if you need staff.",color:"#00308f",fields:[],image:null,thumb:null,footer:"Security Forces"}]})],
+ c2:[mk("c2",5,"1. Be respectful.\n2. No spam or advertising.\n3. Follow staff instructions.\n4. Use tickets for support.",900,{pinned:true})],
+ c3:[g1,g2,g3,g4,mk("c3",4,"You can also run `.help` to see what the bot can do.",117),mk("c3",7,"```\n.userinfo @member\n.awards @member\n```",60),mk("c3",2,"Thanks for the help today, everyone.",20,{reactions:[{emoji:"✅",count:2},{emoji:"🫡",count:5}]})],
+ c4:[mk("c4",3,"I can't see the rules channel.",140),mk("c4",1,"Opening a ticket for you now.",132)],
+ c5:[mk("c5",7,"Reminder: awards review is Friday.",300),mk("c5",5,"Noted. I'll post the list tonight.",290)],
+ c6:[botm("c6","",180,{embeds:[{title:"Case #6: timeout",description:null,color:"#00308f",fields:[{name:"User",value:"A1C_Whitaker"},{name:"Reason",value:"Spamming"}],image:null,thumb:null,footer:null}]})]};
+const ME={id:"1",name:"Security Forces",avatar:AV("E",0),bio:"",status:"online",activity:{type:"Watching",text:"the server"},invite:"#"};
+const GUILDS=[{id:"g1",name:"Security Forces",members:1284,channels:[{id:"c1",name:"announcements",cat:"Information"},{id:"c2",name:"rules",cat:"Information"},{id:"c3",name:"general",cat:"Community"},{id:"c4",name:"support",cat:"Support"},{id:"c5",name:"staff-chat",cat:"Staff"},{id:"c6",name:"mod-logs",cat:"Staff"}],cats:[{id:"k1",name:"Tickets"},{id:"k2",name:"Staff"}]}];
+const MEMS=PEOPLE.map((n,i)=>({id:"u"+i,name:n,username:n.toLowerCase(),bot:false,roles:[["Staff","Moderator"],["Staff"],["Member"],["Member"],["Officer"],["Command"],["Member"],["Staff","Awards"],["Member"],["Member"]][i],timedOut:i==8,warns:i==3?1:i==8?2:0}));
+const ROLES=["Command","Officer","Staff","Moderator","Awards","Member"].map((n,i)=>({id:"r"+(i+1),name:n}));
+const BANS=[{id:"900000000000000001",name:"spam_account_91",reason:"Spamming invite links"},{id:"900000000000000002",name:"raid_user_07",reason:"Raiding"}];
+const CASES=[["timeout","A1C_Whitaker","SSgt_Holloway","Spamming",2],["warn","A1C_Nguyen","Lt_Marsh","Be respectful",20],["ban","spam_account_91","SSgt_Holloway","Spamming invite links",70],["kick","raid_user_04","TSgt_Becker","Disruptive behavior",120],["warn","A1C_Whitaker","MSgt_Vance","Stay on topic",300],["unban","SrA_Dalton","Capt_Okafor","Appeal accepted",900]].map((c,i,a)=>({n:a.length-i,type:c[0],userId:"9000000000000000"+(10+i),user:c[1],modId:"u1",mod:c[2],reason:c[3],time:NOW-c[4]*HR,ms:null}));
+const AUD=[["MemberBanAdd",22,"spam_account_91","Spamming invite links",1,[]],["MessageDelete",72,"A1C_Whitaker","",2,[["count","","3"]]],["MemberUpdate",24,"A1C_Whitaker","Timed out for spamming",3,[["communication_disabled_until","none","in 10 minutes"]]],["RoleCreate",30,"Awards","",6,[["name","","Awards"],["color","","0"]]],["ChannelUpdate",11,"support","",9,[["topic","","Open a ticket for help"]]],["MemberKick",20,"raid_user_04","Disruptive behavior",12,[]],["MemberRoleUpdate",25,"A1C_Nguyen","",20,[["$add","","Member"]]],["MemberBanRemove",23,"SrA_Dalton","Appeal accepted",30,[]]].map((a,i)=>({id:"a"+i,type:a[1],action:a[0],by:{id:"u1",name:PEOPLE[1+i%4],avatar:AV(PEOPLE[1+i%4],1+i%4)},target:a[2],targetId:"9000000000000000"+(30+i),reason:a[3],time:NOW-a[4]*HR,changes:a[5].map(c=>({key:c[0],old:c[1],new:c[2]}))}));
+const ATYPES=[[20,"Member Kick"],[22,"Member Ban Add"],[23,"Member Ban Remove"],[24,"Member Update"],[25,"Member Role Update"],[72,"Message Delete"],[11,"Channel Update"],[30,"Role Create"]].map(a=>({id:a[0],name:a[1]}));
+const TICKS=[{channelId:"t1",n:14,owner:"u3",ownerName:PEOPLE[3],type:"Support",reason:"I can't see the rules channel.",created:NOW-2*HR,claimedBy:null},{channelId:"t2",n:13,owner:"u6",ownerName:PEOPLE[6],type:"Ban appeal",reason:"I'd like to appeal my timeout.",created:NOW-9*HR,claimedBy:"u1"},{channelId:"t3",n:12,owner:"u8",ownerName:PEOPLE[8],type:"Other",reason:"Question about ranks.",created:NOW-30*HR,claimedBy:"u2",closed:{by:"SSgt_Holloway",byId:"u1",reason:"Answered",at:NOW-28*HR}}];
+const CFG=Object.assign({},SAMPLE.cfg,{dmDefaults:Object.assign({},SAMPLE.dm,{award:{title:"You received the {award}",desc:"**Awarded by:** {moderator}\n**Reason:** {reason}"}}),logChannel:"c6",welcomeChannel:"c3",modRole:"r4",adminRole:"r1",supportRole:"r3",ticketCategory:"k1",robloxGroupId:"1234567",appealText:"To appeal, open a ticket in #support."});
+const AWC=[["Awards",["awards","award list","award create","award give","award revoke","award delete"]],["Awards",["uniform","uniform put","uniform take","uniform reset"]]];
+const CMDS=SAMPLE.cmds.map(c=>({name:c.n,cat:c.c,usage:c.u,defaultLevel:c.d,level:c.d,enabled:true,botOwner:false})).concat([["awards",0,"[user]"],["award list",0,""],["award create",2,"<name> | <abbreviation> | <description> | <#color,#color,...>"],["award give",2,"<user> <award> | <reason>"],["award revoke",2,"<user> <award>"],["award delete",2,"<award>"],["uniform",0,"[user]"],["uniform put",2,"<user> <award>"],["uniform take",2,"<user> <award>"],["uniform reset",2,"<user>"]].map(a=>({name:a[0],cat:"Awards",usage:a[2],defaultLevel:a[1],level:a[1],enabled:true,botOwner:false})));
+CMDS.push(...[["patrol",0,""],["time",0,"[user] [7d|30d|all]"],["leaderboard",0,"[7d|30d|all]"],["active",0,""],["logs",0,"<user>"],["report",1,"[this|last]"],["adjust",2,"<user> <+/-minutes> <reason>"],["void",2,"<session id> <reason>"],["quota",0,"[this|last]"],["loa",0,"<from> <until> <reason>"],["loaremove",1,"<user>"]].map(a=>({name:a[0],cat:"Patrol",usage:a[2],defaultLevel:a[1],level:a[1],enabled:true,botOwner:false})));
+const AW=[{id:"service-excellence",name:"Service Excellence Ribbon",abbr:"SER",desc:"Outstanding service to the community.",order:1,colors:["#00308f","#ffffff","#c8102e"],role:null},{id:"honor-guard",name:"Honor Guard Ribbon",abbr:"HGR",desc:"Served in the honor guard.",order:2,colors:["#ffffff","#00308f","#ffffff"],role:null},{id:"outstanding-airman",name:"Outstanding Airman Ribbon",abbr:"OAR",desc:"Named outstanding airman of the month.",order:3,colors:["#c8102e","#ffffff","#c8102e","#00308f"],role:null},{id:"staff-commendation",name:"Staff Commendation",abbr:"SC",desc:"Commended by server staff.",order:4,colors:["#1f7a3d","#ffffff","#1f7a3d"],role:null}];
+const UA={u1:[{id:"service-excellence",by:"Capt_Okafor",byId:"u5",reason:"Ran the onboarding program.",at:NOW-9*DAY,show:true},{id:"outstanding-airman",by:"Lt_Marsh",byId:"u4",reason:"Most helpful this month.",at:NOW-3*DAY,show:true},{id:"staff-commendation",by:"MSgt_Vance",byId:"u7",reason:"Helped moderate during the event.",at:NOW-DAY,show:false}]};
+const ROB={profile:{id:1,name:"SampleAirman",display:"Sample Airman",description:"Sample profile text.",created:Date.parse("2019-04-12"),banned:false,verified:false,friends:48,followers:12,following:20,head:null,bust:null,body:null,groups:[{id:1234567,name:"Security Forces Community",members:2410,role:"Airman",rank:3},{id:7654321,name:"Training Academy",members:960,role:"Cadet",rank:1}]},games:[{id:1,place:11,name:"Flight School",visits:18420,playing:6,favorites:230},{id:2,place:12,name:"Base Defense",visits:5230,playing:2,favorites:71}]};
+function mockApi(p,m,b){
+ const u=new URL(p,"http://x"),path=u.pathname,q=u.searchParams;let x;b=b||{};
+ const out=v=>new Promise(r=>setTimeout(()=>r(JSON.parse(JSON.stringify(v))),40));
+ const note=()=>{toast("Not connected to the bot yet.");return out({ok:true,n:15,id:"x"})};
+ if(m==="GET"){
+  if(path==="/api/me")return out(ME);
+  if(path==="/api/guilds")return out(GUILDS);
+  if(path==="/api/dms")return out([]);
+  if(path==="/api/audit-types")return out(ATYPES);
+  if(path==="/api/roblox")return out(ROB);
+  if(x=path.match(/^\/api\/channels\/(\w+)\/messages$/))return out(q.get("before")?[]:(MOCKMSG[x[1]]||[]));
+  if(x=path.match(/^\/api\/guilds\/\w+\/([\w-]+)(?:\/(\w+))?$/)){
+   const k=x[1];
+   if(k==="members")return out(MEMS);if(k==="roles")return out(ROLES);if(k==="bans")return out(BANS);if(k==="cases")return out(CASES);
+   if(k==="audit")return out(q.get("before")?[]:AUD.filter(e=>!q.get("type")||e.type==+q.get("type")));
+   if(k==="tickets")return out(TICKS);if(k==="awards")return out(AW);if(k==="commands")return out(CMDS);if(k==="config")return out(CFG);
+   if(k==="user-awards")return out((UA[x[2]]||[]).map(e=>Object.assign({},e,{award:AW.find(a=>a.id===e.id)})));
+  }
+  return out([]);
+ }
+ if(path==="/api/presence"){ME.status=b.status;return out({ok:true})}
+ if(path==="/api/identity"){if(b.name)ME.name=b.name;if(typeof b.bio==="string")ME.bio=b.bio;return out({ok:true})}
+ if(x=path.match(/^\/api\/channels\/(\w+)\/messages(?:\/(\w+))?(?:\/(react|pin))?$/)){
+  const list=MOCKMSG[x[1]]=MOCKMSG[x[1]]||[],msg=x[2]&&list.find(e=>e.id===x[2]);
+  if(!x[2]&&m==="POST"){const n=botm(x[1],b.content||"",0);if(b.embed)n.embeds=[{title:b.embed.title||null,description:b.embed.description||null,color:b.embed.color||"#00308f",fields:[],image:null,thumb:null,footer:null}];if(b.files&&b.files.length)n.attachments=b.files.map(f=>({name:f.name,url:f.data,type:/^data:image/.test(f.data)?"image/png":"",size:1024}));if(b.replyTo)n.reply=b.replyTo;list.push(n);return out(n)}
+  if(msg&&m==="PATCH"){msg.content=b.content;msg.edited=true;return out({ok:true})}
+  if(msg&&m==="DELETE"){list.splice(list.indexOf(msg),1);return out({ok:true})}
+  if(msg&&x[3]==="react"){const r=msg.reactions.find(e=>e.emoji===b.emoji);if(r)r.count++;else msg.reactions.push({emoji:b.emoji,count:1});return out({ok:true})}
+  if(msg&&x[3]==="pin"){msg.pinned=!msg.pinned;return out({ok:true})}
+ }
+ return note();
+}
+async function api(p,m,b){
+ if(!API)return mockApi(p,m||"GET",b);
+ const r=await fetch(API+p,{method:m||"GET",headers:Object.assign({"Content-Type":"application/json"},TOK?{Authorization:"Bearer "+TOK}:{}),body:b?JSON.stringify(b):undefined});
+ if(r.status===401){try{sessionStorage.removeItem("sf-tok")}catch(e){}toast("Session expired. Sign in again.");setTimeout(()=>location.reload(),1200);throw new Error("Session expired")}
+ const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||"Request failed ("+r.status+")");return j}
+const T=async(f,ok)=>{try{const r=await f();if(ok)toast(ok);return r}catch(e){toast(e.message||"Something went wrong")}};
+const soft=(p,d)=>p.catch(()=>d===undefined?[]:d);
+const err=t=>{$("err").textContent=t};
+const LOGIN={user:"admin",pass:"patrol"}; // only used while BACKEND is empty (design preview)
+async function doLogin(){const u=$("u").value.trim(),p=$("p").value;
+ if(!API){if(u===LOGIN.user&&p===LOGIN.pass){err("");try{sessionStorage.setItem("sf-in","1")}catch(e){}enter()}else err("Wrong username or password.");return}
+ $("go").disabled=true;err("");
+ try{const r=await fetch(API+"/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({u,p})}),j=await r.json().catch(()=>({}));
+  if(!r.ok){err(j.error||"Login failed");return}
+  TOK=j.token;try{sessionStorage.setItem("sf-tok",TOK)}catch(e){}enter()}
+ catch(e){err("Can't reach the bot. If it was asleep, wait a minute and try again.")}finally{$("go").disabled=false}}
+$("go").onclick=doLogin;$("p").onkeydown=e=>{if(e.key==="Enter")doLogin()};$("u").onkeydown=e=>{if(e.key==="Enter")$("p").focus()};
+$("go").addEventListener("click",()=>{try{if($("rm").checked)localStorage.setItem("sf-ru",$("u").value.trim());else localStorage.removeItem("sf-ru")}catch(e){}});
+$("out").onclick=()=>{try{sessionStorage.removeItem("sf-in");sessionStorage.removeItem("sf-tok")}catch(e){}location.reload()};
+
+function go(t){S.tab=t;if(!S.open.includes(t))S.open.push(t);document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("on",x.id=="t-"+t));wbNav();$("docs").scrollTop=0;scrollTo(0,0);if(t==="home")renderHome();if(t==="plog")renderPlog();if(t==="ptime")renderPtime();if(t==="preport")renderPreport();if(t==="set")renderPset();conR();
+ if(t=="comms"){const el=$("msgs");if(S.stick)el.scrollTop=el.scrollHeight;updJump()}if(t=="mem")loadMem();if(t=="cases")loadCases();if(t=="audit")loadAudit(true);if(t=="tickets")loadTickets();if(t=="awards")loadAwards();if(t=="cmds")loadCmds();if(t=="set")loadSet()}
+document.addEventListener("click",e=>{const g=e.target.closest("[data-go]");if(g)go(g.dataset.go)});
+
+async function enter(){$("login").classList.add("hidden");$("app").classList.remove("hidden");
+ buildExplorer();initWb();
+ bind();try{await refresh()}catch(e){toast(e.message)}
+ if(API){startStream();setInterval(()=>refresh().catch(()=>{}),60000)}
+
+ document.addEventListener("visibilitychange",()=>{if(!document.hidden)mergeLatest()})}
+async function refresh(){const[me,g,d]=await Promise.all([api("/api/me"),api("/api/guilds"),api("/api/dms")]);S.me=me;S.guilds=g;S.dms=d;paint();srvT();side();fillSel();if(API)loadPatrol().catch(e=>toast(e.message));
+ if(!S.cmdN){const gid=g[0]&&g[0].id;if(gid)soft(api(`/api/guilds/${gid}/commands`),[]).then(c=>{S.cmdN=c.length;$("s3").textContent=c.length})}}
+const chanOpts=()=>S.guilds.map(g=>g.channels.map(c=>`<option value="${c.id}">${esc(g.name)} #${esc(c.name)}</option>`).join("")).join("");
+function fillSel(){const ids=["ms","cs","cgs","sgs","as","ks","wg"],v=ids.map(i=>$(i).value),o=S.guilds.map(g=>`<option value="${g.id}">${esc(g.name)}</option>`).join("");
+ ids.forEach((i,k)=>{$(i).innerHTML=o;if(v[k])$(i).value=v[k]});
+ const t=[$("tc").value,$("ac").value];$("tc").innerHTML=$("ac").innerHTML=chanOpts();if(t[0])$("tc").value=t[0];if(t[1])$("ac").value=t[1]}
+function paint(){const m=S.me;if(!m)return;const st={online:"Online",idle:"Idle",dnd:"Do not disturb",invisible:"Offline",offline:"Offline"}[m.status]||m.status,sk=m.status=="invisible"?"offline":m.status;
+ $("bn").textContent=$("hn").textContent=m.name;$("tg").textContent="Status: "+st;$("hp").innerHTML=`<i class="dot ${sk}"></i>${st}`;
+ $("hud").textContent=(m.activity&&m.activity.text?m.activity.type+" "+m.activity.text:"No activity set")+(m.bio?" · "+m.bio:"");
+ ["hav","pav"].forEach(k=>{$(k).style.backgroundImage=`url(${S.av||m.avatar})`});
+ $("s1").textContent=S.guilds.length;$("s2").textContent=S.guilds.reduce((a,g)=>a+g.members,0).toLocaleString();$("s5").textContent=S.dms.length;
+ document.querySelectorAll(".sb").forEach(b=>b.classList.toggle("on",b.dataset.s==(m.status=="offline"?"invisible":m.status)));
+ if(!S.filled){$("pn").value=m.name;$("pb").value=m.bio||"";S.filled=true}}
+async function setPres(status,type,text){status=status=="offline"?"invisible":status;const r=await T(()=>api("/api/presence","POST",{status,type,text}),"Presence updated");if(r){S.me.status=status;S.me.activity=text?{type,text}:null;paint()}}
+function srvT(){$("tb").innerHTML=S.guilds.map((g,i)=>`<tr><td class="f mu" style="width:60px">${String(i+1).padStart(2,"0")}</td><td class="f">${esc(g.name)}</td><td class="mu">${g.members.toLocaleString()} members</td><td class="mu">${g.channels.length} text channels</td><td><div class="row" style="justify-content:flex-end"><button class="nb s d" data-l="${g.id}">Leave</button></div></td></tr>`).join("")||'<tr><td class="mu">The bot is not in any server yet. Use "Add bot to a server".</td></tr>'}
+
+/* ---------- live updates ---------- */
+function startStream(){if(S.es)S.es.close();const es=new EventSource(API+"/api/stream?token="+encodeURIComponent(TOK));S.es=es;
+ es.onopen=()=>mergeLatest();es.onmessage=e=>{let d;try{d=JSON.parse(e.data)}catch(x){return}onEvent(d)}}
+function onEvent(d){const cur=S.cur&&S.cur.id;
+ if(d.t=="patrol"){clearTimeout(onEvent.h);onEvent.h=setTimeout(()=>loadPatrol().catch(()=>{}),400);return}
+ if(d.t=="audit"){LA.unshift(d.e);LA.length=Math.min(LA.length,60);conR()}
+ if(d.t=="new"){const m=d.m;
+  if(d.dm&&!S.dms.find(x=>x.id==m.ch)){S.dms.push({id:m.ch,name:d.name||"Unknown user"});$("s5").textContent=S.dms.length}
+  if(cur==m.ch){if(!S.msgs.find(x=>x.id==m.id)){S.msgs.push(m);msgR({fresh:true,mine:m.self})}}
+  else if(!m.self){S.unread[m.ch]=(S.unread[m.ch]||0)+1;side()}}
+ if(d.t=="upd"&&cur==d.m.ch){const i=S.msgs.findIndex(x=>x.id==d.m.id);if(i>=0){S.msgs[i]=d.m;msgR({})}}
+ if(d.t=="del"&&cur==d.ch){S.msgs=S.msgs.filter(x=>x.id!=d.id);msgR({})}
+ if(d.t=="audit"&&S.tab=="audit"&&$("as").value==d.g&&(!$("at2").value||+$("at2").value==d.e.type)&&!S.audit.find(x=>x.id==d.e.id)){d.e.nw=1;S.audit.unshift(d.e);auditR()}
+ if(d.t=="bulk"&&cur==d.ch){S.msgs=S.msgs.filter(x=>!d.ids.includes(x.id));msgR({})}}
+
+/* ---------- messages ---------- */
+function side(){const cat={};let h="";
+ S.guilds.forEach(g=>{h+=`<h3>${esc(g.name)}</h3>`;let last=null;g.channels.forEach(c=>{if(c.cat&&c.cat!==last){h+=`<div class="mu" style="padding:6px 10px 0;font-size:11px;text-transform:uppercase">${esc(c.cat)}</div>`;last=c.cat}
+  const u=S.unread[c.id];h+=`<button data-k="c,${g.id},${c.id}" class="${S.cur&&S.cur.id==c.id?"on":""} ${u?"un":""}"># ${esc(c.name)}${u?`<span class="bdg">${u}</span>`:""}</button>`})});
+ h+="<h3>Direct messages</h3>"+S.dms.map(d=>{const u=S.unread[d.id];return `<button data-k="d,${d.id}" class="${S.cur&&S.cur.id==d.id?"on":""} ${u?"un":""}">@ ${esc(d.name)}${u?`<span class="bdg">${u}</span>`:""}</button>`}).join("")+'<button data-k="new">+ Message a user by ID</button>';$("side").innerHTML=h}
+async function openThread(t){S.cur=t;S.reply=null;S.msgs=[];S.noMore=false;S.stick=true;S.newc=0;S.unread[t.id]=0;$("chh").textContent=t.title;rb();side();msgR({first:true});
+ try{const l=await api(`/api/channels/${t.id}/messages`);if(!S.cur||S.cur.id!=t.id)return;S.msgs=l;S.noMore=l.length<50;msgR({first:true})}catch(e){toast(e.message)}}
+async function mergeLatest(){if(!S.cur)return;const id=S.cur.id;try{const l=await api(`/api/channels/${id}/messages`);if(!S.cur||S.cur.id!=id)return;const map=new Map(S.msgs.map(m=>[m.id,m]));l.forEach(m=>map.set(m.id,m));S.msgs=[...map.values()].sort((a,b)=>a.time-b.time);msgR({fresh:true})}catch(e){}}
+async function loadOlder(){if(S.noMore||S.loadingOlder||!S.cur||!S.msgs.length)return;S.loadingOlder=true;const id=S.cur.id;
+ try{const o=await api(`/api/channels/${id}/messages?before=${S.msgs[0].id}`);if(!S.cur||S.cur.id!=id)return;if(o.length<50)S.noMore=true;if(o.length){S.msgs=o.concat(S.msgs);msgR({older:true})}else msgR({older:true})}catch(e){}finally{S.loadingOlder=false}}
+const dayLabel=d=>{const t=new Date(),y=new Date(Date.now()-864e5);return d.toDateString()==t.toDateString()?"Today":d.toDateString()==y.toDateString()?"Yesterday":d.toLocaleDateString([],{weekday:"long",month:"long",day:"numeric",year:"numeric"})};
+function md(s){const B=[];s=esc(s).replace(/```([\s\S]*?)```/g,(_,c)=>{B.push(c.replace(/^\w*\n/,""));return "\u0000"+(B.length-1)+"\u0000"});
+ s=s.replace(/`([^`\n]+)`/g,"<code>$1</code>").replace(/\*\*([^*\n]+)\*\*/g,"<b>$1</b>").replace(/(^|[^*])\*([^*\n]+)\*/g,"$1<i>$2</i>").replace(/__([^_\n]+)__/g,"<u>$1</u>").replace(/~~([^~\n]+)~~/g,"<s>$1</s>");
+ s=s.replace(/&lt;a?:(\w+):(\d+)&gt;/g,'<img class="ce" alt=":$1:" src="https://cdn.discordapp.com/emojis/$2.png?size=48">').replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>').replace(/\n/g,"<br>");
+ return s.replace(/\u0000(\d+)\u0000/g,(_,i)=>`<pre>${B[i]}</pre>`)}
+const emb=e=>`<div class="emb" style="border-left-color:${esc(e.color||"#2b3a67")}">${e.title?`<div class="et">${e.url?`<a href="${esc(e.url)}" target="_blank" rel="noopener noreferrer">${esc(e.title)}</a>`:esc(e.title)}</div>`:""}${e.description?`<div>${md(e.description)}</div>`:""}${e.fields.map(f=>`<div class="ef"><b>${esc(f.name)}</b><div>${md(f.value)}</div></div>`).join("")}${e.image?`<img class="att" src="${esc(e.image)}" alt="">`:""}${e.footer?`<div class="mu" style="margin-top:6px">${esc(e.footer)}</div>`:""}</div>`;
+function msgHtml(m,grp){const rp=m.reply?S.msgs.find(x=>x.id==m.reply):null,t=new Date(m.time);
+ return `<div class="msg${grp?" g":""}" data-i="${m.id}"><div class="av" style="background-image:url(${esc(m.avatar)})"></div><div class="b">${rp?`<div class="rp">↩ ${esc(rp.author)}: ${esc(rp.content.slice(0,60))}</div>`:m.reply?'<div class="rp">↩ reply</div>':""}<div class="n"><span style="${m.color?"color:"+esc(m.color):""}">${esc(m.author)}</span>${m.bot?'<span class="tag">BOT</span>':""}<small title="${esc(t.toLocaleString())}">${t.toLocaleTimeString([],{hour:"numeric",minute:"2-digit"})}${m.edited?" (edited)":""}${m.pinned?" · pinned":""}</small></div>${m.content?`<div>${md(m.content)}</div>`:""}${m.attachments.map(a=>a.type.startsWith("image/")?`<a href="${esc(a.url)}" target="_blank" rel="noopener noreferrer"><img class="att" src="${esc(a.url)}" alt="${esc(a.name)}"></a>`:`<div><a href="${esc(a.url)}" target="_blank" rel="noopener noreferrer">${esc(a.name)}</a> <span class="mu">${(a.size/1024).toFixed(0)} KB</span></div>`).join("")}${m.embeds.map(emb).join("")}${m.reactions.map(r=>`<span class="rx" data-r="${esc(r.emoji)}">${md(r.emoji)} ${r.count}</span>`).join("")}</div>
+ <div class="act f"><button data-a="re">Reply</button><button data-a="rx">React</button>${m.self?'<button data-a="ed">Edit</button>':""}<button data-a="pin">${m.pinned?"Unpin":"Pin"}</button><button data-a="fw">Forward</button><button data-a="cp">Copy</button><button data-a="del">Delete</button></div></div>`}
+function msgHtmlAll(){let h=S.noMore&&S.msgs.length?'<div class="mu" style="text-align:center;padding:16px">This is the start of the conversation.</div>':"",prev=null;
+ for(const m of S.msgs){const ds=new Date(m.time).toDateString();if(!prev||prev.ds!=ds)h+=`<div class="dd"><span>${dayLabel(new Date(m.time))}</span></div>`;
+  h+=msgHtml(m,!!(prev&&prev.ds==ds&&prev.m.authorId==m.authorId&&m.time-prev.m.time<3e5&&!m.reply&&!prev.m.embeds.length));prev={m,ds}}
+ return h||'<div class="mu" style="padding:20px">'+(S.cur?"No messages here yet.":"Pick a channel on the left.")+"</div>"}
+function msgR(o){o=o||{};const el=$("msgs"),dist=el.scrollHeight-el.scrollTop-el.clientHeight,atBottom=dist<90,pt=el.scrollTop,ph=el.scrollHeight;
+ el.innerHTML=msgHtmlAll();
+ if(o.older){el.scrollTop=pt+(el.scrollHeight-ph)}
+ else if(o.first||o.mine||(atBottom&&S.stick)){el.scrollTop=el.scrollHeight;S.stick=true;S.newc=0}
+ else{el.scrollTop=pt;if(o.fresh&&!atBottom)S.newc++}
+ updJump()}
+function updJump(){const el=$("msgs"),far=el.scrollHeight-el.scrollTop-el.clientHeight>220;$("jump").classList.toggle("hidden",!far);$("jump").textContent=S.newc?S.newc+" new message"+(S.newc>1?"s":"")+" · Jump to latest":"Jump to latest"}
+const rb=()=>{$("rbar").innerHTML=S.reply?`Replying to ${esc(S.reply.author)} <a href="#" id="rcl" style="color:var(--red)">✕</a>`:""};
+const chips=()=>{$("fchips").innerHTML=S.files.map((f,i)=>`<span class="chip2">${esc(f.name)} <a href="#" data-x="${i}" style="color:var(--red)">✕</a></span>`).join("")};
+const fwOpts=()=>chanOpts()+S.dms.map(d=>`<option value="${d.id}">DM @${esc(d.name)}</option>`).join("");
+async function sendMsg(){const t=$("mi").value.trim();if(!t&&!S.files.length)return;if(!S.cur)return toast("Pick a channel first");
+ const files=await Promise.all(S.files.map(f=>new Promise(r=>{const fr=new FileReader();fr.onload=()=>r({name:f.name,data:fr.result});fr.readAsDataURL(f)})));
+ const r=await T(()=>api(`/api/channels/${S.cur.id}/messages`,"POST",{content:t||undefined,replyTo:S.reply?S.reply.id:undefined,files:files.length?files:undefined}));
+ if(r){$("mi").value="";$("mi").style.height="";S.reply=null;S.files=[];rb();chips();if(!S.msgs.find(x=>x.id==r.id))S.msgs.push(r);msgR({mine:true})}}
+
+/* ---------- members + moderation window ---------- */
+const AC=[["kick","Kick"],["ban","Ban"],["tempban","Temporary ban"],["softban","Softban"],["warn","Warn"],["timeout","Timeout"],["untimeout","Remove timeout"],["note","Add note"],["nickname","Set nickname"],["addrole","Add role"],["removerole","Remove role"],["dm","Message"]];
+async function loadMem(){const g=$("ms").value;if(!g){$("mt").innerHTML='<tr><td class="mu">The bot is not in any server yet.</td></tr>';return}
+ $("mt").innerHTML='<tr><td class="mu">Loading…</td></tr>';
+ try{[S.members,S.roles,S.bans,S.cfg]=await Promise.all([api(`/api/guilds/${g}/members`),soft(api(`/api/guilds/${g}/roles`)),soft(api(`/api/guilds/${g}/bans`)),soft(api(`/api/guilds/${g}/config`),{})])}catch(e){toast(e.message);S.members=[];S.roles=[];S.bans=[]}memR()}
+function memR(){const q=$("mq").value.toLowerCase();
+ $("mt").innerHTML=S.members.map((m,k)=>(m.name+m.username).toLowerCase().includes(q)?`<tr><td class="f">${esc(m.name)}${m.bot?'<span class="tag">BOT</span>':""}${m.timedOut?'<span class="tag">timed out</span>':""}${m.warns?`<span class="tag">${m.warns} warn</span>`:""}</td><td class="mu">${esc(m.roles.slice(0,3).join(", "))}</td><td><div class="row" style="justify-content:flex-end;flex-wrap:nowrap"><select style="width:170px">${AC.map(a=>`<option value="${a[0]}">${a[1]}</option>`).join("")}</select><button class="nb s" data-m="${k}">Apply</button></div></td></tr>`:"").join("")||'<tr><td class="mu">No members found.</td></tr>';
+ $("bt").innerHTML=S.bans.map(b=>`<tr><td class="f">${esc(b.name)}</td><td class="mu">${esc(b.reason)}</td><td style="text-align:right"><button class="nb s" data-u="${b.id}" data-n="${esc(b.name)}">Unban</button></td></tr>`).join("")||'<tr><td class="mu">No banned members.</td></tr>'}
+const DUR=[["5 minutes",5],["10 minutes",10],["1 hour",60],["6 hours",360],["1 day",1440],["7 days",10080],["28 days",40320]];
+const KIND={ban:"ban",tempban:"ban",softban:"ban",kick:"kick",timeout:"timeout",warn:"warn",unban:"unban"};
+const TITLE={kick:"Kick",ban:"Ban",tempban:"Temporary ban",softban:"Softban",warn:"Warn",timeout:"Timeout",unban:"Unban",note:"Add note"};
+function openMod(type,id,name){mod={type,id};const tp=((S.cfg.templates||{})[KIND[type]])||[];
+ $("mtl").textContent=TITLE[type];$("mwho").textContent=name;$("mr").value="";
+ $("mtp").innerHTML='<option value="">No template</option>'+tp.map((t,i)=>`<option value="${i}">${esc(t)}</option>`).join("");$("mtp").parentElement.classList.toggle("hidden",!tp.length);
+ $("mx").innerHTML=(type=="ban"?'<label class="mu">Delete their messages from the last</label><select id="mdays"><option value="0">Don\'t delete any</option><option value="1">1 day</option><option value="7">7 days</option></select>':"")+((type=="tempban"||type=="timeout")?'<label class="mu">Duration</label><select id="mdur">'+DUR.map(d=>`<option value="${d[1]}">${d[0]}</option>`).join("")+"</select>":"");
+ $("mmo").classList.remove("hidden")}
+async function doMember(m,a){const g=$("ms").value;
+ if(a=="dm"){const d=await T(()=>api("/api/dm","POST",{userId:m.id}));if(d){await refresh();openThread({id:d.id,title:"Direct message / "+d.name});go("comms")}return}
+ if(["kick","ban","tempban","softban","warn","timeout","note"].includes(a))return openMod(a,m.id,m.name);
+ const body={};
+ if(a=="nickname"){const r=prompt("New nickname (leave blank to reset):","");if(r===null)return;body.nick=r}
+ if(a=="addrole"||a=="removerole"){const n=prompt("Role name:\n"+S.roles.map(r=>r.name).join(", "));if(!n)return;const r=S.roles.find(x=>x.name.toLowerCase()==n.trim().toLowerCase());if(!r)return toast("No role with that name");body.roleId=r.id}
+ if(a=="untimeout"&&!confirm("Remove the timeout from "+m.name+"?"))return;
+ const r=await T(()=>api(`/api/guilds/${g}/members/${m.id}/${a}`,"POST",body),"Done");if(r)loadMem()}
+
+/* ---------- tickets + roblox ---------- */
+async function loadTickets(){const g=$("ks").value;if(!g){$("ktb").innerHTML='<tr><td class="mu">The bot is not in any server yet.</td></tr>';return}
+ const l=await T(()=>api(`/api/guilds/${g}/tickets`));if(!l)return;
+ $("ktb").innerHTML=l.map(t=>`<tr><td class="f mu" style="width:70px">#${t.n}</td><td><span class="tag" style="margin:0">${esc(t.type)}</span></td><td class="f">${esc(t.ownerName)}<div class="mu" style="font-family:Inter;text-transform:none;letter-spacing:0;font-weight:400">${esc((t.reason||"").slice(0,120))}</div></td><td class="mu">${t.closed?"Closed by "+esc(t.closed.by)+": "+esc(t.closed.reason):(t.claimedBy?"Claimed":"Open")}</td><td class="mu">${new Date(t.created).toLocaleString()}</td><td style="text-align:right">${t.closed?"":`<button class="nb s d" data-k="${t.channelId}">Close</button>`}</td></tr>`).join("")||'<tr><td class="mu">No tickets yet.</td></tr>'}
+async function rbxLook(){const q=$("rq").value.trim();if(!q)return;$("rout").innerHTML='<div class="mu">Looking up…</div>';
+ try{const r=await api("/api/roblox?q="+encodeURIComponent(q)),p=r.profile,gs=r.games.slice().sort((a,b)=>b.visits-a.visits),n=x=>x==null?"Hidden":Number(x).toLocaleString();
+  $("rout").innerHTML=`<div class="row" style="gap:22px;align-items:flex-start;margin-bottom:28px">${p.bust?`<img src="${esc(p.bust)}" alt="" style="width:140px;height:140px;border:1px solid var(--ln)">`:""}<div style="flex:1;min-width:240px"><h2 style="margin:0 0 6px;border:0;padding:0">${esc(p.display)}</h2><div class="mu">@${esc(p.name)} · ID ${p.id}${p.banned?" · terminated":""}</div><div class="mu" style="margin:8px 0">Created ${new Date(p.created).toLocaleDateString()}</div><div class="st4"><div><b>${n(p.friends)}</b><span class="f">Friends</span></div><div><b>${n(p.followers)}</b><span class="f">Followers</span></div><div><b>${n(p.following)}</b><span class="f">Following</span></div></div></div></div>${p.description?`<p class="mu" style="margin-bottom:28px">${esc(p.description)}</p>`:""}<h3 class="f" style="margin-bottom:10px">Groups (${p.groups.length})</h3><table class="tb" style="margin-bottom:28px">${p.groups.map(g=>`<tr><td class="f"><a href="https://www.roblox.com/groups/${g.id}" target="_blank" rel="noopener noreferrer" style="color:var(--blue)">${esc(g.name)}</a></td><td class="mu">${esc(g.role)} (rank ${g.rank})</td><td class="mu">${n(g.members)} members</td></tr>`).join("")||'<tr><td class="mu">None or hidden</td></tr>'}</table><h3 class="f" style="margin-bottom:10px">Games (${gs.length}) · ${n(gs.reduce((a,g)=>a+g.visits,0))} total visits · ${n(gs.reduce((a,g)=>a+g.playing,0))} playing now</h3><table class="tb">${gs.map(g=>`<tr><td class="f"><a href="https://www.roblox.com/games/${g.place}" target="_blank" rel="noopener noreferrer" style="color:var(--blue)">${esc(g.name)}</a></td><td class="mu">${n(g.visits)} visits</td><td class="mu">${n(g.playing)} playing</td><td class="mu">${n(g.favorites)} favorites</td></tr>`).join("")||'<tr><td class="mu">No public games</td></tr>'}</table>`}
+ catch(e){$("rout").innerHTML=`<div class="mu">${esc(e.message)}</div>`}}
+
+/* ---------- awards ---------- */
+S.awards=[];S.ac=["#00308f","#ffffff","#c8102e"];S.edit=null;
+const ribbon=c=>{const n=c.length;return `linear-gradient(90deg,${c.map((x,i)=>`${x} ${(i*100/n).toFixed(2)}% ${((i+1)*100/n).toFixed(2)}%`).join(",")})`};
+const rackHtml=l=>{if(!l.length)return '<div class="mu">Nothing on the uniform yet.</div>';const n=l.length,rem=n%3,rows=[];let i=0;if(rem){rows.push(l.slice(0,rem));i=rem}for(;i<n;i+=3)rows.push(l.slice(i,i+3));return `<div class="rack">${rows.map(r=>`<div>${r.map(c=>`<span class="rb" style="background:${ribbon(c)}"></span>`).join("")}</div>`).join("")}</div>`};
+function stripes(){$("acs").innerHTML=S.ac.map((c,i)=>`<input type="color" data-i="${i}" value="${c}" style="width:52px;height:40px;padding:2px">`).join("");$("apv").style.background=ribbon(S.ac)}
+async function loadAwards(){const g=$("wg").value;if(!g){$("atb2").innerHTML='<tr><td class="mu">The bot is not in any server yet.</td></tr>';return}
+ const[a,ro]=await Promise.all([T(()=>api(`/api/guilds/${g}/awards`)),soft(api(`/api/guilds/${g}/roles`))]);if(!a)return;S.awards=a;
+ const v=$("ar").value;$("ar").innerHTML='<option value="">No role</option>'+ro.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join("");if(v)$("ar").value=v;
+ $("atb2").innerHTML=a.map((x,i)=>`<tr><td style="width:100px"><span class="rb" style="background:${ribbon(x.colors)}"></span></td><td class="f">${esc(x.name)} <span class="tag">${esc(x.abbr)}</span><div class="mu" style="font-weight:400;font-size:13px">${esc(x.desc)}</div></td><td class="mu">Order ${x.order}${x.role?" · gives "+esc((ro.find(r=>r.id==x.role)||{name:"a role"}).name):""}</td><td><div class="row" style="justify-content:flex-end"><button class="nb s" data-e="${i}">Edit</button><button class="nb s d" data-x="${i}">Delete</button></div></td></tr>`).join("")||'<tr><td class="mu">No awards yet. Create your first one above.</td></tr>';
+ const ms=await soft(api(`/api/guilds/${g}/members`)),cv=$("wm").value;$("wm").innerHTML='<option value="">Choose a member…</option>'+ms.filter(m=>!m.bot).map(m=>`<option value="${m.id}">${esc(m.name)}</option>`).join("");if(cv)$("wm").value=cv;loadMemAw()}
+async function loadMemAw(){const g=$("wg").value,u=$("wm").value;if(!u){$("wbox").innerHTML='<div class="mu">Pick a member to see and manage their awards.</div>';return}
+ const l=await T(()=>api(`/api/guilds/${g}/user-awards/${u}`));if(!l)return;const shown=l.filter(x=>x.show!==false).map(x=>x.award.colors);
+ $("wbox").innerHTML=`<div class="row" style="align-items:flex-start;gap:28px"><div><label>Uniform ribbon rack</label><div style="margin-top:8px">${rackHtml(shown)}</div></div><div style="flex:1;min-width:280px"><label>Give an award</label><div class="row" style="margin-top:8px"><select id="wa" style="flex:1;min-width:160px">${S.awards.map(a=>`<option value="${a.id}">${esc(a.name)}</option>`).join("")}</select><input id="wr" placeholder="Reason (optional)" style="flex:2;min-width:180px"><button class="nb s" id="wgive">Give</button></div></div></div>
+ <table class="tb" style="margin-top:16px">${l.map(x=>`<tr><td style="width:100px"><span class="rb" style="background:${ribbon(x.award.colors)}"></span></td><td class="f">${esc(x.award.name)}<div class="mu" style="font-weight:400;font-size:13px">${esc(x.reason||"No reason given")} · ${new Date(x.at).toLocaleDateString()} · by ${esc(x.by)}</div></td><td><div class="row"><div class="tg2 ${x.show!==false?"on":""}" data-s="${x.id}"></div><span class="mu">On uniform</span></div></td><td style="text-align:right"><button class="nb s d" data-r="${x.id}">Take away</button></td></tr>`).join("")||'<tr><td class="mu">This member has no awards.</td></tr>'}</table>`}
+
+/* ---------- audit log ---------- */
+const pretty=a=>String(a).replace(/([a-z])([A-Z])/g,"$1 $2");
+async function loadAudit(reset){const g=$("as").value;if(!g){$("atb").innerHTML='<tr><td class="mu">The bot is not in any server yet.</td></tr>';return}
+ if(!S.auditTypes){S.auditTypes=await soft(api("/api/audit-types"));$("at2").innerHTML='<option value="">All actions</option>'+S.auditTypes.map(x=>`<option value="${x.id}">${esc(x.name)}</option>`).join("")}
+ if(reset){S.audit=[];S.auditEnd=false}
+ const ty=$("at2").value,before=!reset&&S.audit.length?S.audit[S.audit.length-1].id:"";
+ try{const l=await api(`/api/guilds/${g}/audit?limit=50${ty?"&type="+ty:""}${before?"&before="+before:""}`);S.audit=reset?l:S.audit.concat(l);if(l.length<50)S.auditEnd=true;auditR()}
+ catch(e){$("atb").innerHTML=`<tr><td class="mu">${esc(e.message)}. The bot needs the View Audit Log permission.</td></tr>`}}
+function auditR(){const q=$("aq").value.toLowerCase();
+ $("atb").innerHTML=S.audit.filter(e=>((e.by?e.by.name:"")+e.target+e.reason+e.action).toLowerCase().includes(q)).map(e=>`<tr class="${e.nw?"nw":""}"><td class="mu" style="width:150px">${new Date(e.time).toLocaleString()}</td><td class="au f">${e.by?`<img src="${esc(e.by.avatar)}" alt="">${esc(e.by.name)}`:'<span class="mu">Unknown</span>'}</td><td><span class="tag" style="margin:0">${esc(pretty(e.action))}</span></td><td>${esc(e.target)}<div class="mu" style="font-size:12px">${esc(e.targetId)}</div></td><td>${esc(e.reason)||'<span class="mu">-</span>'}${e.changes.length?`<div class="mu" style="font-size:12px;margin-top:4px">${e.changes.map(c=>esc(c.key+": "+(c.old||"none")+" → "+(c.new||"none"))).join("<br>")}</div>`:""}</td></tr>`).join("")||'<tr><td class="mu">No audit log entries found.</td></tr>';
+ $("amore").classList.toggle("hidden",S.auditEnd||!S.audit.length)}
+
+/* ---------- cases, commands, settings ---------- */
+async function loadCases(){const g=$("cs").value;if(!g){$("ctb").innerHTML='<tr><td class="mu">The bot is not in any server yet.</td></tr>';return}
+ const r=await T(()=>api(`/api/guilds/${g}/cases`));if(!r)return;S.cases=r;const ty=[...new Set(r.map(c=>c.type))],v=$("ct").value;$("ct").innerHTML='<option value="">All types</option>'+ty.map(t=>`<option>${t}</option>`).join("");$("ct").value=ty.includes(v)?v:"";caseR()}
+function caseR(){const q=$("cq2").value.toLowerCase(),t=$("ct").value;
+ $("ctb").innerHTML=S.cases.filter(c=>(!t||c.type==t)&&(c.user+c.mod+c.reason+c.userId).toLowerCase().includes(q)).map(c=>`<tr><td class="f mu" style="width:70px">#${c.n}</td><td><span class="tag" style="margin:0">${esc(c.type)}</span></td><td class="f">${esc(c.user)}<div class="mu" style="font-family:Inter;text-transform:none;letter-spacing:0;font-weight:400">${c.userId}</div></td><td class="mu">by ${esc(c.mod)}</td><td>${esc(c.reason)}</td><td class="mu">${new Date(c.time).toLocaleString()}</td></tr>`).join("")||'<tr><td class="mu">No cases yet. Moderation actions from chat and from this dashboard show up here.</td></tr>'}
+async function loadCmds(){const g=$("cgs").value;if(!g){$("cg").innerHTML='<div class="mu">The bot is not in any server yet.</div>';return}
+ const[c,cf]=await Promise.all([T(()=>api(`/api/guilds/${g}/commands`)),soft(api(`/api/guilds/${g}/config`),{})]);if(!c)return;S.cmds=c;S.cfg=cf;$("s3").textContent=c.length;
+ cmdR()}
+const LVN=["Everyone","Mod","Admin","Owner"];
+function cmdR(){const q=$("cq").value.toLowerCase(),cats=[...new Set(S.cmds.map(c=>c.cat))];
+ $("cf").innerHTML=["All",...cats].map(c=>`<button class="chip f ${(S.cat||"All")==c?"on":""}" data-c="${c}">${c}</button>`).join("");
+ $("cg").innerHTML=S.cmds.filter(c=>c.name.includes(q)&&(!S.cat||c.cat==S.cat)).map(c=>`<div class="cd"><div class="row" style="justify-content:space-between"><code>${esc(S.cfg.prefix||".")}${esc(c.name)}</code>${c.botOwner?'<span class="mu f">bot owner</span>':`<div class="tg2 ${c.enabled?"on":""}" data-t="${esc(c.name)}"></div>`}</div><div class="mu">${c.cat} · ${esc(c.usage)||"no arguments"}</div>${c.botOwner?"":`<select data-p="${esc(c.name)}">${LVN.map((l,i)=>`<option value="${i}" ${c.level==i?"selected":""}>${l}${i==c.defaultLevel?" (default)":""}</option>`).join("")}</select>`}</div>`).join("")||'<div class="mu">No commands match.</div>'}
+const FIELDS=[["prefix","Prefix","text"],["logChannel","Log channel (cases and reports)","ch"],["welcomeChannel","Welcome and leave channel","ch"],["suggestChannel","Suggestions channel","ch"],["welcomeMsg","Welcome message ({user} {server} {count})","area"],["leaveMsg","Leave message ({user} {server})","area"],["autorole","Role given to new members","role"],["modRole","Mod role","role"],["adminRole","Admin role","role"],["verifyRole","Role given by .verify","role"],["supportRole","Ticket support role","role"],["ticketCategory","Ticket category (new tickets are created here)","cat"],["ticketTypes","Ticket types, one per line (max 4)","list2"],["appealText","Appeal info (shown in ban messages)","area"],["robloxGroupId","Default Roblox group ID","text"],["joingate","Minimum account age to join, in days (0 = off)","num"],["badwords","Blacklisted words (one per line)","list"],["linkAllow","Allowed link domains (one per line)","list"],["antilink","Block links","bool"],["antispam","Block spam","bool"],["automod","Block blacklisted words","bool"],["raidmode","Raid mode (kick every new member)","bool"],["dmOnAction","DM people when they are moderated","bool"]];
+const TPL=["ban","unban","kick","timeout","warn"];
+const DMK=[["ban","Ban"],["tempban","Temporary ban"],["softban","Softban"],["kick","Kick"],["timeout","Timeout or mute"],["warn","Warning"],["unban","Unban"],["untimeout","Timeout removed"],["ticketClosed","Ticket closed"],["award","Award received"]];
+async function loadSet(){const g=$("sgs").value;if(!g){$("sform").innerHTML='<div class="mu">The bot is not in any server yet.</div>';return}
+ const[cf,ro]=await Promise.all([T(()=>api(`/api/guilds/${g}/config`)),soft(api(`/api/guilds/${g}/roles`))]);if(!cf)return;S.cfg=cf;S.roles=ro;
+ const gd=S.guilds.find(x=>x.id==g),ca=o=>'<option value="">Not set</option>'+(gd.cats||[]).map(c=>`<option value="${c.id}" ${o==c.id?"selected":""}>${esc(c.name)}</option>`).join(""),co=o=>'<option value="">Not set</option>'+gd.channels.map(c=>`<option value="${c.id}" ${o==c.id?"selected":""}># ${esc(c.name)}</option>`).join(""),rl=o=>'<option value="">Not set</option>'+ro.map(r=>`<option value="${r.id}" ${o==r.id?"selected":""}>${esc(r.name)}</option>`).join("");
+ $("sform").innerHTML=FIELDS.map(([k,l,t])=>{const v=cf[k],id="f_"+k;
+  if(t=="bool")return `<div class="ck"><input type="checkbox" id="${id}" ${v?"checked":""}><label for="${id}" style="margin:0">${l}</label></div>`;
+  const inp=t=="text"?`<input id="${id}" value="${esc(v)}">`:t=="num"?`<input id="${id}" type="number" min="0" value="${esc(v||0)}">`:t=="ch"?`<select id="${id}">${co(v)}</select>`:t=="role"?`<select id="${id}">${rl(v)}</select>`:t=="cat"?`<select id="${id}">${ca(v)}</select>`:t=="list2"?`<textarea id="${id}" rows="4">${esc((v||[]).join("\n"))}</textarea>`:t=="list"?`<textarea id="${id}" rows="4">${esc((v||[]).join("\n"))}</textarea>`:`<textarea id="${id}" rows="3">${esc(v)}</textarea>`;
+  return `<div><label class="mu">${l}</label>${inp}</div>`}).join("");
+$("dform").innerHTML=DMK.map(([k,l])=>{const d=Object.assign({},(cf.dmDefaults||{})[k],(cf.dmTpl||{})[k]);return `<div class="cd"><h3 class="f">${l}</h3><input id="dt_${k}" value="${esc(d.title)}" placeholder="Title"><textarea id="dd_${k}" rows="6" placeholder="Message">${esc(d.desc)}</textarea></div>`}).join("");
+ $("tform").innerHTML=TPL.map(k=>`<div><label class="mu">${k}</label><textarea id="t_${k}" rows="5">${esc(((cf.templates||{})[k]||[]).join("\n"))}</textarea></div>`).join("")}
+async function saveSet(){const g=$("sgs").value;if(!g)return;const b={},lines=s=>s.split("\n").map(x=>x.trim()).filter(Boolean);
+ FIELDS.forEach(([k,l,t])=>{const e=$("f_"+k);b[k]=t=="bool"?e.checked:t=="num"?Math.max(0,+e.value||0):t=="list"?lines(e.value).map(x=>x.toLowerCase()):t=="list2"?lines(e.value):(t=="ch"||t=="role"||t=="cat")?(e.value||null):e.value});
+ b.templates={};TPL.forEach(k=>{b.templates[k]=lines($("t_"+k).value)});
+ b.dmTpl={};DMK.forEach(([k])=>{b.dmTpl[k]={title:$("dt_"+k).value.trim(),desc:$("dd_"+k).value}});
+ const r=await T(()=>api(`/api/guilds/${g}/config`,"POST",b),"Settings saved");if(r)loadSet()}
+
+
+/* ---------- patrol time tracking (sample data until the bot is connected) ---------- */
+const RANKS=[["Amn","Airman"],["A1C","Airman First Class"],["SrA","Senior Airman"],["SSgt","Staff Sergeant"],["TSgt","Technical Sergeant"],["MSgt","Master Sergeant"],["1st Lt","First Lieutenant"],["Capt","Captain"]];
+const RKI={Airman:0,A1C:1,SrA:2,SSgt:3,TSgt:4,MSgt:5,Lt:6,Capt:7},POS=["Patrol","Entry Control","Response Force","Desk"];
+const prng=seed=>{let s=seed;return()=>(s=(s*1664525+1013904223)%4294967296)/4294967296},PR=prng(11);
+const PM=PEOPLE.map((n,i)=>({name:n,id:1900000000+Math.floor(PR()*2500000000),rk:RKI[n.split("_")[0]],fl:"ABC"[i%3],pos:POS[i%4]}));
+const PS=[],PV=[],PA=[],PL=[];let psid=1000;
+for(let d=20;d>=0;d--)PM.forEach((m,mi)=>{if(PR()<.5){const n=PR()<.25?2:1;for(let k=0;k<n;k++){const day=new Date();day.setHours(0,0,0,0);const st=day.getTime()-d*DAY+(8+PR()*13)*HR,len=(8+PR()*85)*MIN;if(d===0&&st+len>Date.now())continue;PS.push({id:"S-"+(++psid),m:mi,start:st,end:st+len})}}});
+if(API){PM.length=PS.length=PL.length=0}else PL.push({m:5,from:Date.now()-2*DAY,to:Date.now()+5*DAY,why:"Out of town"});
+if(!API)PS.push({id:"S-"+(++psid),m:3,start:Date.now()-47*MIN-12e3,end:null},{id:"S-"+(++psid),m:7,start:Date.now()-12*MIN-30e3,end:null},{id:"S-"+(++psid),m:1,start:Date.now()-96*MIN-4e3,end:null});
+PS.sort((a,b)=>b.start-a.start);
+const PT={range:"7",st:"all",q:"",page:0,lv:"sessions",ev:"all",mq:"",sort:"time",dir:-1,sel:null,wk:0,cf:"all",
+ cfg:{group:"4829175",team:"Security Forces",place:"7081342266",channel:"#patrol-log",post:true,min:"1",quota:"120",maxh:"6",tz:"utc",startMsg:"Patrol started: {user}",endMsg:"Patrol ended: {user} - time on patrol {duration}"}};
+const zp=n=>String(n).padStart(2,"0"),ZM=["JAN","FEB","MAR","APR","MAY","JUN","JUL","AUG","SEP","OCT","NOV","DEC"],ZW=["SUN","MON","TUE","WED","THU","FRI","SAT"];
+const zD=ms=>{const s=Math.max(0,Math.floor(ms/1000)),h=Math.floor(s/3600),m=Math.floor(s%3600/60);return h?`${h}h ${zp(m)}m`:`${m}m ${zp(s%60)}s`};
+const zH=ms=>{const m=Math.round(ms/MIN),h=Math.floor(m/60);return m<1?"-":h?`${h}h ${zp(m%60)}m`:`${m}m`};
+const zU=()=>PT.cfg.tz==="utc";
+const zP=t=>{const d=new Date(t);return zU()?{D:d.getUTCDate(),M:d.getUTCMonth(),Y:d.getUTCFullYear(),h:d.getUTCHours(),m:d.getUTCMinutes(),s:d.getUTCSeconds(),w:d.getUTCDay()}:{D:d.getDate(),M:d.getMonth(),Y:d.getFullYear(),h:d.getHours(),m:d.getMinutes(),s:d.getSeconds(),w:d.getDay()}};
+const zT=(t,sec)=>{const p=zP(t);return `${zp(p.D)} ${ZM[p.M]} ${zp(p.Y%100)} ${zp(p.h)}${zp(p.m)}${sec?zp(p.s):""}${zU()?"Z":""}`};
+const zC=t=>{const p=zP(t);return `${zp(p.h)}${zp(p.m)}${zp(p.s)}${zU()?"Z":""}`};
+const zDay=t=>{const p=zP(t);return zU()?Date.UTC(p.Y,p.M,p.D):new Date(p.Y,p.M,p.D).getTime()};
+const zWeek=t=>zDay(t)-((zP(t).w+6)%7)*DAY;
+const pdur=s=>(s.end||Date.now())-s.start;
+const pfill=(t,s)=>t.replace(/\{user\}/g,PM[s.m].name).replace(/\{duration\}/g,zD(pdur(s))).replace(/\{group\}/g,PT.cfg.group).replace(/\{team\}/g,PT.cfg.team);
+const ptot=(mi,days)=>PS.filter(s=>s.m===mi&&(!days||s.start>=Date.now()-days*DAY)).reduce((a,s)=>a+pdur(s),0)+PA.filter(a=>a.m===mi&&(!days||a.t>=Date.now()-days*DAY)).reduce((x,a)=>x+a.min*MIN,0);
+const pevents=()=>{const ev=[];PS.forEach(s=>{ev.push({t:s.start,k:"s",x:pfill(PT.cfg.startMsg,s),s});if(s.end)ev.push({t:s.end,k:"e",x:pfill(PT.cfg.endMsg,s),s})});return ev.sort((a,b)=>b.t-a.t)};
+const psel=(k,o)=>`<select data-psel="${k}">${o.map(x=>`<option value="${x[0]}" ${String(PT[k])===x[0]?"selected":""}>${x[1]}</option>`).join("")}</select>`;
+function renderHome(){
+ const live=PS.filter(s=>!s.end),t0=zDay(Date.now()),wk=PS.filter(s=>s.start>=Date.now()-7*DAY),done=wk.filter(s=>s.end);
+ const hrs=wk.reduce((a,s)=>a+pdur(s),0)/HR,avg=done.length?done.reduce((a,s)=>a+pdur(s),0)/done.length:0;
+ $("ptiles").innerHTML=`<div class="tile"><div class="k">On patrol now</div><div class="v num">${live.length}</div><div class="d">${esc(PT.cfg.team)}</div></div><div class="tile"><div class="k">Patrols today</div><div class="v num">${PS.filter(s=>s.start>=t0).length}</div><div class="d">since 0000${zU()?"Z":""}</div></div><div class="tile"><div class="k">Patrol hours</div><div class="v num">${hrs.toFixed(1)}</div><div class="d">last 7 days</div></div><div class="tile"><div class="k">Personnel patrolling</div><div class="v num">${new Set(wk.map(s=>s.m)).size}</div><div class="d">last 7 days</div></div><div class="tile"><div class="k">Average patrol</div><div class="v num">${zH(avg)}</div><div class="d">last 7 days</div></div>`;
+ $("pboard").innerHTML=live.length?`<table><thead><tr><th>Rank</th><th>Roblox user</th><th>Flight</th><th>Started</th><th class="r">Time on patrol</th></tr></thead><tbody>${live.map(s=>`<tr><td><span class="rk">${RANKS[PM[s.m].rk][0]}</span></td><td><b>${esc(PM[s.m].name)}</b></td><td>${flt(PM[s.m])}</td><td class="mono">${zT(s.start)}</td><td class="r num" data-since="${s.start}">${zD(pdur(s))}</td></tr>`).join("")}</tbody></table>`:'<div class="pad mu">Nobody is on patrol.</div>';
+ const days=[];for(let i=13;i>=0;i--){const a=t0-i*DAY;days.push({a,h:PS.filter(s=>s.start>=a&&s.start<a+DAY).reduce((x,s)=>x+pdur(s),0)/HR})}
+ const mx=Math.max(1,...days.map(d=>d.h));
+ $("pchart").innerHTML=`<div class="chart">${days.map(d=>`<i style="height:${Math.max(1,d.h/mx*100)}%" title="${zp(zP(d.a).D)} ${ZM[zP(d.a).M]}: ${d.h.toFixed(1)} h"></i>`).join("")}</div><div class="ax">${days.map(d=>`<span>${zp(zP(d.a).D)}</span>`).join("")}</div>`;
+ $("pevents").innerHTML=pevents().slice(0,10).map(e=>`<div><span class="t">${zT(e.t)}</span><span class="${e.k}">${esc(e.x)}</span></div>`).join("");
+ const top=PM.map((m,i)=>({m,t:ptot(i,7)})).sort((a,b)=>b.t-a.t).slice(0,6),tm=Math.max(1,(top[0]||{t:0}).t);
+ $("ptop").innerHTML=top.map((x,i)=>`<div><span class="mu">${i+1}</span><span><b>${esc(x.m.name)}</b><u style="width:${Math.max(2,x.t/tm*100)}%"></u></span><span class="r num">${zH(x.t)}</span></div>`).join("");
+}
+const pflt=()=>PS.filter(s=>(PT.range==="all"||s.start>=Date.now()-(+PT.range)*DAY)&&(PT.st==="all"||(PT.st==="active")===!s.end)&&PM[s.m].name.toLowerCase().includes(PT.q.toLowerCase()));
+const PER=14;
+function plogRows(){const L=pflt(),pages=Math.max(1,Math.ceil(L.length/PER));if(PT.page>=pages)PT.page=pages-1;const Pg=L.slice(PT.page*PER,PT.page*PER+PER);
+ return {rows:Pg.map(s=>`<tr><td class="mono">${s.id}</td><td><span class="rk">${RANKS[PM[s.m].rk][0]}</span><b>${esc(PM[s.m].name)}</b></td><td>${esc(PT.cfg.team)}</td><td class="mono">${zT(s.start)}</td><td class="mono">${s.end?zT(s.end):'<span class="mu">In progress</span>'}</td><td class="r num" ${s.end?"":`data-since="${s.start}"`}>${zD(pdur(s))}</td><td>${s.end?'<span class="tag" style="margin:0">Completed</span>':'<span class="tag on">Active</span>'}</td><td class="r"><button class="nb s d" data-pa="void" data-id="${s.id}">Void</button></td></tr>`).join("")||'<tr><td colspan="8" class="mu">No sessions match.</td></tr>',foot:`${L.length} session${L.length===1?"":"s"} &middot; ${(L.reduce((a,s)=>a+pdur(s),0)/HR).toFixed(1)} h total`,pages}}
+function renderPlog(){
+ const seg=`<div class="seg"><button class="${PT.lv==="sessions"?"on":""}" data-pa="lv" data-v="sessions">Sessions</button><button class="${PT.lv==="events"?"on":""}" data-pa="lv" data-v="events">Event log</button></div>`,per=psel("range",[["1","Last 24 hours"],["7","Last 7 days"],["14","Last 14 days"],["all","All time"]]);
+ let body;
+ if(PT.lv==="events"){const ev=pevents().filter(e=>(PT.ev==="all"||PT.ev===e.k)&&(PT.range==="all"||e.t>=Date.now()-(+PT.range)*DAY)&&PM[e.s.m].name.toLowerCase().includes(PT.q.toLowerCase())).slice(0,200);
+  body=`<div class="filters">${seg}<div><label>Period</label>${per}</div><div><label>Event</label>${psel("ev",[["all","All events"],["s","Patrol started"],["e","Patrol ended"]])}</div><div style="flex:1;min-width:200px"><label>Roblox user</label><input data-pin="log" placeholder="Search" value="${esc(PT.q)}"></div></div><div class="log">${ev.map(e=>`<div><span class="t">${zT(e.t,true)}</span><span class="${e.k}">${esc(e.x)}</span></div>`).join("")||'<div class="mu">No events.</div>'}</div>`}
+ else{const r=plogRows();body=`${adjPanel()}<div class="filters">${seg}<div><label>Period</label>${per}</div><div><label>Status</label>${psel("st",[["all","All"],["active","Active"],["done","Completed"]])}</div><div style="flex:1;min-width:200px"><label>Roblox user</label><input data-pin="log" placeholder="Search" value="${esc(PT.q)}"></div><button class="nb s" data-pa="csv">Export CSV</button></div>
+  <table><thead><tr><th>Session</th><th>Personnel</th><th>Team</th><th>Started</th><th>Ended</th><th class="r">Duration</th><th>Status</th><th></th></tr></thead><tbody id="plrows">${r.rows}</tbody></table><div class="pager"><span id="plfoot">${r.foot}</span><span class="sp"></span><button class="nb s" data-pa="page" data-d="-1">Previous</button><span id="plpg">Page ${PT.page+1} of ${r.pages}</span><button class="nb s" data-pa="page" data-d="1">Next</button></div>`}
+ $("t-plog").innerHTML=`<div class="sec"><div class="in"><h2 class="sh">Patrol log</h2><div class="pnl">${body}</div></div></div>`}
+const pmrows=()=>{const L=PM.map((m,i)=>({i,m,t7:ptot(i,7),t30:ptot(i,30),all:ptot(i),n:PS.filter(s=>s.m===i).length,last:Math.max(0,...PS.filter(s=>s.m===i).map(s=>s.start))})).filter(x=>x.m.name.toLowerCase().includes(PT.mq.toLowerCase()));
+ const k={time:"t30",name:"name",patrols:"n",rank:"rk"}[PT.sort];L.sort((a,b)=>k==="name"?PT.dir*-a.m.name.localeCompare(b.m.name):k==="rk"?PT.dir*(a.m.rk-b.m.rk):PT.dir*(a[k]-b[k]));
+ return L.map(x=>`<tr data-pa="selm" data-i="${x.i}" class="${PT.sel===x.i?"sel":""}"><td><span class="rk" title="${RANKS[x.m.rk][1]}">${RANKS[x.m.rk][0]}</span></td><td><b>${esc(x.m.name)}</b><div class="mu mono">${x.m.id}</div></td><td>${flt(x.m)}</td><td>${esc(x.m.pos)}</td><td class="r num">${zH(x.t7)}</td><td class="r num">${zH(x.t30)}</td><td class="r num">${zH(x.all)}</td><td class="r num">${x.n}</td><td class="mono">${x.last?zT(x.last):'<span class="mu">Never</span>'}</td></tr>`).join("")||'<tr><td colspan="9" class="mu">No personnel match.</td></tr>'};
+function renderPtime(){
+ const d=PT.sel==null?"":(()=>{const m=PM[PT.sel],L=PS.filter(s=>s.m===PT.sel);return `<div class="pnl"><h3>${esc(m.name)}</h3><div class="pad"><div class="mu mono" style="margin-bottom:10px">${RANKS[m.rk][1]} &middot; ${flt(m)} &middot; ${m.id}</div><div class="kv"><div><span class="mu">Last 7 days</span><b class="num">${zH(ptot(PT.sel,7))}</b></div><div><span class="mu">Last 30 days</span><b class="num">${zH(ptot(PT.sel,30))}</b></div><div><span class="mu">All time</span><b class="num">${zH(ptot(PT.sel))}</b></div><div><span class="mu">Patrols</span><b class="num">${L.length}</b></div></div>${API?`<div class="form" style="align-items:end;margin-top:14px"><div><label>Flight</label><input id="pp_fl" value="${esc(m.fl)}" placeholder="A"></div><div><label>Position</label><input id="pp_pos" value="${esc(m.pos)}" placeholder="Patrol"></div><div><button class="nb s" data-pa="pperson">Save</button></div></div>`:""}</div><div class="log">${L.slice(0,8).map(s=>`<div><span class="t">${zT(s.start)}</span><span class="e">${zD(pdur(s))}${s.end?"":" (active)"}</span></div>`).join("")}</div></div>`})();
+ const ar=k=>PT.sort===k?(PT.dir<0?" &#9660;":" &#9650;"):"";
+ $("t-ptime").innerHTML=`<div class="sec"><div class="in"><h2 class="sh">Time by personnel</h2><div class="${PT.sel==null?"":"cols"}"><div class="pnl"><div class="filters"><div style="flex:1;min-width:200px"><label>Roblox user</label><input data-pin="people" placeholder="Search" value="${esc(PT.mq)}"></div></div><table><thead><tr><th class="sort" data-pa="sort" data-k="rank">Rank${ar("rank")}</th><th class="sort" data-pa="sort" data-k="name">Roblox user${ar("name")}</th><th>Flight</th><th>Position</th><th class="r">7 days</th><th class="r sort" data-pa="sort" data-k="time">30 days${ar("time")}</th><th class="r">All time</th><th class="r sort" data-pa="sort" data-k="patrols">Patrols${ar("patrols")}</th><th>Last patrol</th></tr></thead><tbody id="pmrows">${pmrows()}</tbody></table></div>${d}</div></div></div>`}
+function pwk(){const ws=zWeek(Date.now())-PT.wk*7*DAY;return {ws,rows:PM.map((m,i)=>{const days=[0,1,2,3,4,5,6].map(k=>PS.filter(s=>s.m===i&&s.start>=ws+k*DAY&&s.start<ws+(k+1)*DAY).reduce((a,s)=>a+pdur(s),0));return{i,m,days,t:days.reduce((a,b)=>a+b,0)}}).sort((a,b)=>b.t-a.t)}}
+
+const zIn=t=>{const d=new Date(t);return d.getUTCFullYear()+"-"+String(d.getUTCMonth()+1).padStart(2,"0")+"-"+String(d.getUTCDate()).padStart(2,"0")};
+
+const LC=[],LA=[];
+function rkOf(n){n=String(n||"").trim();if(!n)n="Unranked";const i=RANKS.findIndex(r=>r[1].toLowerCase()===n.toLowerCase()||r[0].toLowerCase()===n.toLowerCase());if(i>=0)return i;RANKS.push([n.length>8?n.slice(0,8):n,n]);return RANKS.length-1}
+const flt=m=>m.fl?m.fl+" Flight":"-";
+let PLOADING=null;
+async function loadPatrol(){
+ if(!API)return;
+ const d=await api("/api/patrol"),ix={};
+ PM.length=0;d.people.forEach((o,i)=>{PM.push({name:o.name,id:o.id,rk:rkOf(o.rank),fl:o.fl,pos:o.pos,uid:o.id});ix[o.id]=i});
+ PS.length=0;d.sessions.forEach(x=>{if(ix[x.u]!==undefined)PS.push({id:x.id,m:ix[x.u],start:x.start,end:x.end})});
+ PA.length=0;d.adj.forEach(x=>{if(ix[x.u]!==undefined)PA.push({id:x.id,m:ix[x.u],min:x.min,why:x.why,t:x.t})});
+ PV.length=0;d.voids.forEach(x=>{if(ix[x.u]!==undefined)PV.push({id:x.id,m:ix[x.u],start:x.start,end:x.end,why:x.why,voidAt:x.voidAt})});
+ PL.length=0;d.leave.forEach(x=>{if(ix[x.u]!==undefined)PL.push({id:x.id,m:ix[x.u],from:x.from,to:x.to,why:x.why})});
+ PT.cfg=Object.assign({},PT.cfg,d.cfg);
+ const g=S.guilds[0];if(g)soft(api(`/api/guilds/${g.id}/cases`),[]).then(c=>{LC.length=0;LC.push(...c.slice(0,60));conR()});
+ pRefresh()}
+function pRefresh(){const f={home:renderHome,plog:renderPlog,ptime:renderPtime,preport:renderPreport,set:renderPset}[S.tab];if(f)f();conR()}
+const pCall=async(path,m,b,ok)=>{try{await api(path,m,b);if(ok)toast(ok);await loadPatrol();return true}catch(e){toast(e.message||"Something went wrong");return false}};
+function leavePanel(){const opts=PM.map((m,i)=>`<option value="${i}">${esc(m.name)}</option>`).join("");
+ return `<div class="pnl" style="margin-top:18px"><h3>Leave of absence <span class="mu">excused from the weekly quota</span></h3><div class="pad"><div class="form" style="align-items:end"><div><label>Roblox user</label><select id="lv_m">${opts}</select></div><div><label>From</label><input id="lv_f" type="date" value="${zIn(Date.now())}"></div><div><label>Until</label><input id="lv_t" type="date" value="${zIn(Date.now()+7*DAY)}"></div><div class="w"><label>Reason</label><input id="lv_r" placeholder="Reason"></div><div><button class="nb" data-pa="lvadd">Add leave</button></div></div></div>
+ <table><thead><tr><th>Roblox user</th><th>From</th><th>Until</th><th>Reason</th><th></th></tr></thead><tbody>${PL.map((l,i)=>`<tr><td><b>${esc(PM[l.m].name)}</b></td><td class="mono">${zIn(l.from)}</td><td class="mono">${zIn(l.to)}</td><td>${esc(l.why||"")}</td><td class="r"><button class="nb s d" data-pa="lvdel" data-i="${i}">Remove</button></td></tr>`).join("")||'<tr><td colspan="5" class="mu">No leave on file.</td></tr>'}</tbody></table></div>`}
+function adjPanel(){const opts=PM.map((m,i)=>`<option value="${i}">${esc(m.name)}</option>`).join("");
+ return `<div class="pnl" style="margin-bottom:14px"><h3>Correct patrol time <span class="mu">same as .adjust and .void</span></h3><div class="pad"><div class="form" style="align-items:end"><div><label>Roblox user</label><select id="aj_m">${opts}</select></div><div><label>Minutes (+ or -)</label><input id="aj_n" type="number" placeholder="e.g. 30 or -15"></div><div class="w"><label>Reason</label><input id="aj_r" placeholder="Required"></div><div><button class="nb" data-pa="ajadd">Apply</button></div></div>
+ ${PA.length||PV.length?`<table style="margin-top:12px"><thead><tr><th>Type</th><th>Personnel</th><th>Change</th><th>When</th><th>Reason</th></tr></thead><tbody>${PA.map(a=>`<tr><td>Adjustment</td><td><b>${esc(PM[a.m].name)}</b></td><td class="num">${a.min>0?"+":""}${a.min} min</td><td class="mono">${zT(a.t)}</td><td>${esc(a.why)}</td></tr>`).join("")}${PV.map(v=>`<tr><td>Voided</td><td><b>${esc(PM[v.m].name)}</b></td><td class="num">${v.id} (${zD(v.end-v.start)})</td><td class="mono">${zT(v.voidAt)}</td><td>${esc(v.why)}</td></tr>`).join("")}</tbody></table>`:""}</div></div>`}
+function renderPreport(){
+ const Q=+PT.cfg.quota||0,w=pwk(),sum=[0,1,2,3,4,5,6].map(k=>w.rows.reduce((a,r)=>a+r.days[k],0));
+ $("t-preport").innerHTML=`<div class="sec"><div class="in"><h2 class="sh">Weekly report</h2><div class="pnl"><div class="filters"><div><label>Week</label>${psel("wk",[["0","This week"],["1","Last week"],["2","2 weeks ago"]])}</div><div class="mu" style="padding-bottom:8px">${zT(w.ws).slice(0,9)} to ${zT(w.ws+6*DAY).slice(0,9)}</div><span class="sp"></span>${Q?`<div class="mu" style="padding-bottom:8px">Quota ${Q} min/week &middot; ${w.rows.filter(r=>{const t=r.t+PA.filter(a=>a.m===r.i&&a.t>=w.ws&&a.t<w.ws+7*DAY).reduce((x,a)=>x+a.min*MIN,0);return PL.some(l=>l.m===r.i&&l.from<w.ws+7*DAY&&l.to>=w.ws)||t>=Q*MIN}).length} of ${w.rows.length} met or on leave</div>`:""}<button class="nb s" data-pa="csvw">Export CSV</button></div>
+ <table><thead><tr><th>Rank</th><th>Roblox user</th>${[0,1,2,3,4,5,6].map(k=>`<th class="c">${ZW[(k+1)%7]} ${zp(zP(w.ws+k*DAY).D)}</th>`).join("")}<th class="r">Total</th>${Q?`<th>Quota</th>`:""}</tr></thead><tbody>${w.rows.map(r=>{const adj=PA.filter(a=>a.m===r.i&&a.t>=w.ws&&a.t<w.ws+7*DAY).reduce((x,a)=>x+a.min*MIN,0),tot=r.t+adj,lv=PL.some(l=>l.m===r.i&&l.from<w.ws+7*DAY&&l.to>=w.ws),st=lv?`<span class="tag" style="margin:0">On leave</span>`:tot>=Q*MIN?`<span class="tag on" style="margin:0">Met</span>`:`<span class="tag" style="margin:0;color:var(--red)">Short ${Math.ceil((Q*MIN-tot)/MIN)}m</span>`;return `<tr><td><span class="rk">${RANKS[r.m.rk][0]}</span></td><td><b>${esc(r.m.name)}</b></td>${r.days.map(d=>`<td class="heat ${d?"":"z"}">${zH(d)}</td>`).join("")}<td class="r num"><b>${zH(tot)}</b></td>${Q?`<td>${st}</td>`:""}</tr>`}).join("")}</tbody><tfoot><tr><td></td><td class="mu">All personnel</td>${sum.map(d=>`<td class="heat mu">${zH(d)}</td>`).join("")}<td class="r num"><b>${zH(sum.reduce((a,b)=>a+b,0))}</b></td>${Q?"<td></td>":""}</tr></tfoot></table></div>${leavePanel()}</div></div>`}
+function renderPset(){const c=PT.cfg;$("psetbox").innerHTML=`<div class="sec" style="padding:0 0 18px"><h2 class="sh">Patrol tracking</h2><div class="pnl" style="max-width:820px"><div class="pad"><div class="form"><div><label>Roblox group ID</label><input id="ps_group" value="${esc(c.group)}"></div><div><label>Team name</label><input id="ps_team" value="${esc(c.team)}"></div><div><label>Game place ID</label><input id="ps_place" value="${esc(c.place)}"></div><div><label>Shortest session to log (minutes)</label><input id="ps_min" type="number" min="0" value="${esc(c.min)}"></div><div><label>Weekly patrol quota (minutes, 0 = none)</label><input id="ps_quota" type="number" min="0" value="${esc(c.quota)}"></div><div><label>Auto-end a patrol after (hours)</label><input id="ps_maxh" type="number" min="1" value="${esc(c.maxh)}"><div class="hint">Closes sessions left open, for example after a game crash.</div></div><div><label>Log channel</label><input id="ps_channel" value="${esc(c.channel)}"><div class="hint">${API?"Channel ID, or the exact channel name":"Channel name"}</div></div><div class="ck" style="align-self:end"><input type="checkbox" id="ps_post" ${c.post?"checked":""}><label for="ps_post">Post patrol messages</label></div>
+ <div class="w"><label>Patrol started message</label><input id="ps_startMsg" value="${esc(c.startMsg)}"></div><div class="w"><label>Patrol ended message</label><input id="ps_endMsg" value="${esc(c.endMsg)}"><div class="hint">Placeholders: {user} {duration} {team} {group}</div></div><div><label>Time format</label><select id="ps_tz"><option value="utc" ${c.tz==="utc"?"selected":""}>Zulu (UTC)</option><option value="local" ${c.tz==="local"?"selected":""}>Local time</option></select></div></div><div style="margin-top:16px"><button class="nb" data-pa="psave">Save patrol settings</button></div></div></div></div>`}
+function pdl(name,rows){const t=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(",")).join("\n"),a=document.createElement("a");a.href=URL.createObjectURL(new Blob([t],{type:"text/csv"}));a.download=name;a.click()}
+function pact(a,d){
+ if(a==="lv"){PT.lv=d.v;renderPlog()}
+ if(a==="page"){const pages=Math.max(1,Math.ceil(pflt().length/PER));PT.page=Math.min(pages-1,Math.max(0,PT.page+ +d.d));const r=plogRows();$("plrows").innerHTML=r.rows;$("plfoot").innerHTML=r.foot;$("plpg").textContent=`Page ${PT.page+1} of ${r.pages}`}
+ if(a==="csv")pdl("patrol-log.csv",[["Session","Roblox user","Roblox ID","Team","Started","Ended","Duration (min)"]].concat(pflt().map(s=>[s.id,PM[s.m].name,PM[s.m].id,PT.cfg.team,new Date(s.start).toISOString(),s.end?new Date(s.end).toISOString():"",Math.round(pdur(s)/MIN)])));
+ if(a==="csvw"){const w=pwk();pdl("weekly-report.csv",[["Roblox user","Rank"].concat([0,1,2,3,4,5,6].map(k=>ZW[(k+1)%7]+" "+zp(zP(w.ws+k*DAY).D))).concat(["Total (min)"])].concat(w.rows.map(r=>[PM[r.i].name,RANKS[PM[r.i].rk][0]].concat(r.days.map(x=>Math.round(x/MIN))).concat([Math.round(r.t/MIN)]))))}
+ if(a==="pperson"){const m=PM[PT.sel];return void pCall("/api/patrol/person","POST",{userId:m.uid,fl:$("pp_fl").value.trim(),pos:$("pp_pos").value.trim()},"Saved")}
+ if(a==="selm"){PT.sel=PT.sel===+d.i?null:+d.i;renderPtime()}
+ if(a==="sort"){if(PT.sort===d.k)PT.dir*=-1;else{PT.sort=d.k;PT.dir=d.k==="name"||d.k==="rank"?1:-1}renderPtime()}
+ if(a==="void"){const s=PS.find(x=>x.id===d.id);if(!s)return;const w=prompt("Reason for voiding "+s.id+":");if(!w||!w.trim())return;if(API)return void pCall("/api/patrol/void","POST",{id:s.id,why:w.trim()},"Session voided");PS.splice(PS.indexOf(s),1);PV.push({...s,end:s.end||Date.now(),why:w.trim(),voidAt:Date.now()});toast("Session voided");renderPlog();conR()}
+ if(a==="ajadd"){if(!PM.length)return toast("No personnel yet");const m=+$("aj_m").value,n=Math.round(+$("aj_n").value),w=$("aj_r").value.trim();if(!n)return toast("Enter the minutes to add or remove");if(!w)return toast("A reason is required");if(API)return void pCall("/api/patrol/adjust","POST",{userId:PM[m].uid,min:n,why:w},"Time adjusted");PA.push({m,min:n,why:w,t:Date.now()});toast("Time adjusted");renderPlog();conR()}
+ if(a==="lvadd"){if(!PM.length)return toast("No personnel yet");const m=+$("lv_m").value,f=Date.parse($("lv_f").value),t=Date.parse($("lv_t").value);if(isNaN(f)||isNaN(t)||t<f)return toast("Check the dates");if(API)return void pCall("/api/patrol/leave","POST",{userId:PM[m].uid,from:f,to:t+DAY-1,why:$("lv_r").value.trim()});PL.push({m,from:f,to:t+DAY-1,why:$("lv_r").value.trim()});renderPreport()}
+ if(a==="lvdel"){if(API)return void pCall("/api/patrol/leave/"+PL[+d.i].id,"DELETE");PL.splice(+d.i,1);renderPreport()}
+ if(a==="psave"&&API){const b={};["group","team","place","min","quota","maxh","channel","startMsg","endMsg"].forEach(k=>{b[k]=$("ps_"+k).value.trim()});b.post=$("ps_post").checked;b.tz=$("ps_tz").value;return void pCall("/api/patrol/config","POST",b,"Patrol settings saved")}
+ if(a==="psave"){["group","team","place","min","quota","maxh","channel","startMsg","endMsg"].forEach(k=>{PT.cfg[k]=$("ps_"+k).value.trim()});PT.cfg.post=$("ps_post").checked;PT.cfg.tz=$("ps_tz").value;toast("Patrol settings saved");renderPset();conR()}
+}
+document.addEventListener("click",e=>{const el=e.target.closest("[data-pa]");if(el)pact(el.dataset.pa,el.dataset)});
+document.addEventListener("input",e=>{const t=e.target,k=t.dataset&&t.dataset.pin;if(k==="log"){PT.q=t.value;PT.page=0;if(PT.lv==="events")renderPlog();else{const r=plogRows();$("plrows").innerHTML=r.rows;$("plfoot").innerHTML=r.foot;$("plpg").textContent=`Page 1 of ${r.pages}`}}if(k==="people"){PT.mq=t.value;$("pmrows").innerHTML=pmrows()}});
+document.addEventListener("change",e=>{const t=e.target,k=t.dataset&&t.dataset.psel;if(k){PT[k]=t.value;PT.page=0;if(k==="wk")renderPreport();else renderPlog()}});
+
+/* ---------- workbench: explorer, open pages, live log, quick open ---------- */
+const TREE=[["Patrol",[["home","Overview"],["plog","Patrol log"],["ptime","Time by personnel"],["preport","Weekly report"]]],["Server",[["comms","Messages"],["mem","Members"],["cases","Cases"],["audit","Audit log"],["tickets","Tickets"],["srv","Servers"]]],["Personnel",[["awards","Awards"],["rbx","Roblox lookup"]]],["Bot",[["cmds","Commands"],["tools","Tools"],["set","Settings"],["id","Bot identity"]]]];
+const TITLEOF=Object.fromEntries(TREE.flatMap(g=>g[1]));
+const GRP=Object.fromEntries(TREE.flatMap(g=>g[1].map(i=>[i[0],g[0]])));
+function buildExplorer(){$("mnu").innerHTML=`<div class="mg" data-mg="home"><button data-go="home">Home</button></div>`+TREE.map(g=>`<div class="mg" data-mg="${g[0]}"><button data-tg="1">${g[0]} &#9662;</button><div class="dd">${g[1].map(i=>`<button data-go="${i[0]}" data-it="${i[0]}">${i[1]}</button>`).join("")}</div></div>`).join("")}
+function wbNav(){
+ document.querySelectorAll("[data-it]").forEach(b=>b.classList.toggle("on",b.dataset.it===S.tab));
+ document.querySelectorAll(".mg").forEach(g=>{g.classList.remove("open");g.classList.toggle("on",g.dataset.mg===(S.tab==="home"?"home":GRP[S.tab]))});
+ $("mnu").classList.remove("open");
+ $("crumb").innerHTML=S.tab==="home"?"You are here: <b>Home</b>":`You are here: <a data-go="home" style="cursor:pointer">Home</a><i>&rsaquo;</i>${GRP[S.tab]||""}<i>&rsaquo;</i><b>${esc(TITLEOF[S.tab]||S.tab)}</b>`}
+document.addEventListener("click",e=>{const t=e.target.closest("[data-tg]");if(t){const g=t.parentNode,o=g.classList.contains("open");document.querySelectorAll(".mg").forEach(x=>x.classList.remove("open"));if(!o)g.classList.add("open")}else if(!e.target.closest(".mg"))document.querySelectorAll(".mg").forEach(x=>x.classList.remove("open"))});
+document.addEventListener("click",e=>{const c=e.target.closest("[data-close]");if(!c)return;const t=c.dataset.close,i=S.open.indexOf(t);S.open.splice(i,1);if(S.tab===t)go(S.open[Math.max(0,i-1)]);else wbNav()});
+function conR(){const L=[];PS.forEach(s=>{L.push({t:s.start,k:"patrol",x:pfill(PT.cfg.startMsg,s)});if(s.end)L.push({t:s.end,k:"patrol",x:pfill(PT.cfg.endMsg,s)})});(API?LC:CASES).forEach(c=>L.push({t:c.time,k:"mod",x:`Case #${c.n} ${c.type}: ${c.user} (by ${c.mod}) - ${c.reason}`}));(API?LA:AUD).forEach(a=>L.push({t:a.time,k:"audit",x:`${a.action}: ${a.target} (by ${a.by.name})`}));
+ L.sort((a,b)=>b.t-a.t);$("conb").innerHTML=L.filter(l=>PT.cf==="all"||l.k===PT.cf).slice(0,60).map(l=>`<div><span class="t">${zT(l.t,true)}</span><span class="k">${l.k.toUpperCase()}</span><span class="${l.k==="patrol"?"s":"e"}">${esc(l.x)}</span></div>`).join("")}
+function zClock(){const z=$("zt");if(z)z.textContent=zT(Date.now(),true)}
+function initWb(){
+ $("mbtn").onclick=()=>$("mnu").classList.toggle("open");$("top").onclick=()=>scrollTo(0,0);
+ $("conT").onclick=()=>{const c=$("con");c.classList.toggle("min");$("conT").textContent=c.classList.contains("min")?"Show":"Hide"};
+ document.querySelectorAll("[data-cf]").forEach(b=>b.onclick=()=>{PT.cf=b.dataset.cf;document.querySelectorAll("[data-cf]").forEach(x=>x.classList.toggle("on",x===b));conR()});
+ const pal=()=>{const q=$("jq").value.toLowerCase(),L=Object.entries(TITLEOF).filter(x=>x[1].toLowerCase().includes(q));$("jpal").innerHTML=L.map((x,i)=>`<button class="${i?"":"on"}" data-go="${x[0]}"><span>${x[1]}</span></button>`).join("");$("jpal").classList.toggle("hidden",!L.length)};
+ const shut=()=>{$("jpal").classList.add("hidden");$("jq").value=""};
+ $("jq").addEventListener("input",pal);$("jq").addEventListener("focus",pal);
+ $("jq").addEventListener("keydown",e=>{if(e.key==="Enter"){const b=$("jpal").querySelector("button");if(b){go(b.dataset.go);shut()}}if(e.key==="Escape"){shut();$("jq").blur()}});
+ document.addEventListener("click",e=>{if(e.target.closest("#jpal button"))shut();else if(!e.target.closest(".jump"))$("jpal").classList.add("hidden")});
+ document.addEventListener("keydown",e=>{if(e.key==="/"&&!/INPUT|TEXTAREA|SELECT/.test((document.activeElement||{}).tagName||"")){e.preventDefault();$("jq").focus()}});
+ wbNav();renderHome();conR();zClock()}
+setInterval(()=>{zClock();document.querySelectorAll("[data-since]").forEach(el=>{el.textContent=zD(Date.now()-(+el.dataset.since))})},1000);
+
+function bind(){
+ $("stb").onclick=e=>{const b=e.target.closest("button");if(b)setPres(b.dataset.s,S.me.activity?S.me.activity.type:"Playing",S.me.activity?S.me.activity.text:"")};
+ $("aset").onclick=()=>setPres(S.me.status,$("at").value,$("ax").value.trim());
+ $("aclr").onclick=()=>{$("ax").value="";setPres(S.me.status,"Playing","")};
+ $("tb").onclick=async e=>{const id=e.target.dataset.l;if(!id)return;const g=S.guilds.find(x=>x.id==id);if(!confirm("Make the bot leave "+g.name+"?"))return;await T(()=>api(`/api/guilds/${id}/leave`,"POST"),"Left "+g.name);refresh()};
+ $("sinv").onclick=()=>window.open(S.me.invite,"_blank","noopener");
+ $("side").onclick=async e=>{const k=(e.target.closest("button")||{dataset:{}}).dataset.k;if(!k)return;const p=k.split(",");
+  if(k=="new"){const id=(prompt("User ID to message:")||"").trim();if(!id)return;const d=await T(()=>api("/api/dm","POST",{userId:id}));if(d){await refresh();openThread({id:d.id,title:"Direct message / "+d.name})}return}
+  if(p[0]=="c"){const g=S.guilds.find(x=>x.id==p[1]);openThread({id:p[2],title:g.name+" / #"+g.channels.find(c=>c.id==p[2]).name})}
+  else{const d=S.dms.find(x=>x.id==p[1]);openThread({id:d.id,title:"Direct message / "+d.name})}};
+ $("send").onclick=sendMsg;
+ $("mi").onkeydown=e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();sendMsg()}};
+ $("mi").oninput=()=>{$("mi").style.height="auto";$("mi").style.height=Math.min(140,$("mi").scrollHeight)+"px"};
+ $("att").onclick=()=>$("fi").click();
+ $("fi").onchange=e=>{for(const f of e.target.files){if(S.files.length>=5){toast("Max 5 files");break}if(S.files.reduce((a,x)=>a+x.size,0)+f.size>8e6){toast("Files must total under 8 MB");break}S.files.push(f)}e.target.value="";chips()};
+ $("fchips").onclick=e=>{const i=e.target.dataset.x;if(i!=null){e.preventDefault();S.files.splice(i,1);chips()}};
+ $("rbar").onclick=e=>{if(e.target.id=="rcl"){e.preventDefault();S.reply=null;rb()}};
+ $("jump").onclick=()=>{const el=$("msgs");el.scrollTop=el.scrollHeight;S.stick=true;S.newc=0;updJump()};
+ $("msgs").onscroll=()=>{const el=$("msgs");S.stick=el.scrollHeight-el.scrollTop-el.clientHeight<90;if(S.stick)S.newc=0;if(el.scrollTop<80)loadOlder();updJump()};
+ $("msgs").addEventListener("load",()=>{const el=$("msgs");if(S.stick)el.scrollTop=el.scrollHeight},true);
+ $("msgs").onclick=async e=>{const el=e.target.closest(".msg");if(!el||!S.cur)return;const m=S.msgs.find(x=>x.id==el.dataset.i);if(!m)return;const a=e.target.dataset.a,rx=e.target.closest(".rx"),base=`/api/channels/${S.cur.id}/messages/${m.id}`;
+  if(rx){await T(()=>api(base+"/react","POST",{emoji:rx.dataset.r}));return}
+  if(a=="re"){S.reply=m;rb();$("mi").focus()}
+  if(a=="rx"){const em=prompt("Emoji to react with:","👍");if(em)await T(()=>api(base+"/react","POST",{emoji:em}))}
+  if(a=="ed"){const t=prompt("Edit message:",m.content);if(t&&t.trim())await T(()=>api(base,"PATCH",{content:t}),"Edited")}
+  if(a=="pin")await T(()=>api(base+"/pin","POST"),m.pinned?"Unpinned":"Pinned");
+  if(a=="del"&&confirm("Delete this message?"))await T(()=>api(base,"DELETE"),"Deleted");
+  if(a=="cp"){try{navigator.clipboard.writeText(m.content)}catch(x){}toast("Copied")}
+  if(a=="fw"){fw=m;$("fp").textContent=m.author+": "+m.content;$("fs").innerHTML=fwOpts();$("fmo").classList.remove("hidden")}};
+ $("fx").onclick=()=>$("fmo").classList.add("hidden");
+ $("fg").onclick=async()=>{const id=$("fs").value;if(!id)return;await T(()=>api(`/api/channels/${id}/messages`,"POST",{content:"↪ Forwarded from "+fw.author+": "+fw.content}),"Forwarded");$("fmo").classList.add("hidden")};
+ $("ms").onchange=loadMem;$("mq").oninput=memR;$("mre").onclick=loadMem;
+ $("mt").onclick=e=>{const b=e.target.closest("[data-m]");if(b)doMember(S.members[b.dataset.m],b.previousElementSibling.value)};
+ $("bt").onclick=e=>{const id=e.target.dataset.u;if(id)openMod("unban",id,e.target.dataset.n)};
+ $("mtp").onchange=()=>{const tp=((S.cfg.templates||{})[KIND[mod.type]])||[],v=$("mtp").value;if(v!=="")$("mr").value=tp[+v]};
+ $("mno").onclick=()=>$("mmo").classList.add("hidden");
+ $("mok").onclick=async()=>{const b={reason:$("mr").value.trim()||undefined};if($("mdays"))b.days=+$("mdays").value;if($("mdur"))b.minutes=+$("mdur").value;
+  const r=await T(()=>api(`/api/guilds/${$("ms").value}/members/${mod.id}/${mod.type}`,"POST",b));if(r){toast(TITLE[mod.type]+" done"+(r.n?" (case #"+r.n+")":""));$("mmo").classList.add("hidden");loadMem()}};
+ $("wg").onchange=$("wre").onclick=loadAwards;$("wm").onchange=loadMemAw;
+ $("acs").oninput=e=>{const i=e.target.dataset.i;if(i!=null){S.ac[i]=e.target.value;$("apv").style.background=ribbon(S.ac)}};
+ $("acadd").onclick=()=>{if(S.ac.length<7){S.ac.push("#ffffff");stripes()}};$("acrem").onclick=()=>{if(S.ac.length>1){S.ac.pop();stripes()}};
+ const clr=()=>{S.edit=null;["an","ab","ad","ao"].forEach(i=>$(i).value="");$("ar").value="";S.ac=["#00308f","#ffffff","#c8102e"];$("acan").classList.add("hidden");stripes()};
+ $("acan").onclick=clr;stripes();
+ $("asave").onclick=async()=>{const b={id:S.edit,name:$("an").value.trim(),abbr:$("ab").value.trim(),desc:$("ad").value.trim(),order:$("ao").value,role:$("ar").value||null,colors:S.ac};const r=await T(()=>api(`/api/guilds/${$("wg").value}/awards`,"POST",b),"Award saved");if(r){clr();loadAwards()}};
+ $("atb2").onclick=async e=>{const b=e.target.closest("button");if(!b)return;
+  if(b.dataset.e!=null){const a=S.awards[b.dataset.e];S.edit=a.id;$("an").value=a.name;$("ab").value=a.abbr;$("ad").value=a.desc;$("ao").value=a.order;$("ar").value=a.role||"";S.ac=a.colors.slice();stripes();$("acan").classList.remove("hidden");$("an").focus();return}
+  if(b.dataset.x!=null){const a=S.awards[b.dataset.x];if(!confirm("Delete "+a.name+"? Members lose it too."))return;const r=await T(()=>api(`/api/guilds/${$("wg").value}/awards/${encodeURIComponent(a.id)}`,"DELETE"),"Award deleted");if(r)loadAwards()}};
+ $("wbox").onclick=async e=>{const g=$("wg").value,u=$("wm").value;
+  if(e.target.id=="wgive"){const r=await T(()=>api(`/api/guilds/${g}/user-awards/${u}`,"POST",{award:$("wa").value,reason:$("wr").value.trim()}),"Award given");if(r)loadMemAw();return}
+  const sv=e.target.dataset.s;if(sv){const on=!e.target.classList.contains("on"),r=await T(()=>api(`/api/guilds/${g}/user-awards/${u}/${encodeURIComponent(sv)}/show`,"POST",{show:on}));if(r)loadMemAw();return}
+  const rv=e.target.dataset.r;if(rv&&confirm("Take this award away?")){const r=await T(()=>api(`/api/guilds/${g}/user-awards/${u}/${encodeURIComponent(rv)}`,"DELETE"),"Award removed");if(r)loadMemAw()}};
+ $("ks").onchange=$("kre").onclick=loadTickets;$("rgo").onclick=rbxLook;$("rq").onkeydown=e=>{if(e.key==="Enter")rbxLook()};
+ $("ktb").onclick=async e=>{const c=e.target.dataset.k;if(!c)return;const r=prompt("Reason for closing (optional):","");if(r===null)return;await T(()=>api(`/api/guilds/${$("ks").value}/tickets/${c}/close`,"POST",{reason:r}),"Ticket closed");setTimeout(loadTickets,800)};
+ $("as").onchange=$("at2").onchange=()=>loadAudit(true);$("aq").oninput=auditR;$("amore").onclick=()=>loadAudit(false);
+ $("cs").onchange=loadCases;$("ct").onchange=caseR;$("cq2").oninput=caseR;
+ $("cgs").onchange=loadCmds;$("cq").oninput=cmdR;
+ $("cf").onclick=e=>{const c=e.target.dataset.c;if(c){S.cat=c=="All"?"":c;cmdR()}};
+ $("cg").onclick=async e=>{const n=e.target.dataset.t;if(!n)return;const c=S.cmds.find(x=>x.name==n),v=!c.enabled;const r=await T(()=>api(`/api/guilds/${$("cgs").value}/commands/${encodeURIComponent(n)}`,"POST",{enabled:v}));if(r){c.enabled=v;cmdR()}};
+ $("cg").onchange=async e=>{const n=e.target.dataset.p;if(!n)return;const c=S.cmds.find(x=>x.name==n);const r=await T(()=>api(`/api/guilds/${$("cgs").value}/commands/${encodeURIComponent(n)}`,"POST",{level:+e.target.value}),"Saved");if(r)c.level=+e.target.value};
+ $("sgs").onchange=loadSet;$("ssave").onclick=saveSet;
+ $("cpn").onclick=async e=>{const b=e.target.dataset.b;if(!b)return;const c=$("tc").value,v=$("tv").value.trim();if(!c)return toast("Pick a channel first");
+  if(b=="create"){if(!v)return toast("Enter a channel name");const g=S.guilds.find(x=>x.channels.some(y=>y.id==c));await T(()=>api(`/api/guilds/${g.id}/channels`,"POST",{name:v}),"Channel created");return refresh()}
+  const P={purge:["/purge","POST",{count:+v||10}],slowmode:["/slowmode","POST",{seconds:+v||0}],lock:["/lock","POST",{lock:true}],unlock:["/lock","POST",{lock:false}],rename:["","PATCH",{name:v}],topic:["","PATCH",{topic:v}],delete:["","DELETE"]}[b];
+  if((b=="purge"||b=="delete")&&!confirm(b+" this channel's "+(b=="purge"?"last "+(+v||10)+" messages":"channel")+"?"))return;
+  const r=await T(()=>api(`/api/channels/${c}${P[0]}`,P[1],P[2]),"Done");if(r&&/rename|delete/.test(b))refresh()};
+ $("apn").onclick=async e=>{const b=e.target.dataset.b;if(!b)return;const c=$("ac").value,t=$("atl").value.trim(),d=$("ads").value.trim();if(!c)return toast("Pick a channel first");if(!t&&!d)return toast("Write something first");
+  const body=b=="embed"?{embed:{title:t,description:d,color:$("acl").value.trim()||undefined}}:{content:(t?"**"+t+"**\n":"")+d};
+  const r=await T(()=>api(`/api/channels/${c}/messages`,"POST",body),"Sent");if(r){$("atl").value=$("ads").value=""}};
+ $("pf").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{S.av=r.result;paint();toast("Avatar ready. Press Save to apply.")};r.readAsDataURL(f)};
+ $("psave").onclick=async()=>{const body={name:$("pn").value.trim(),bio:$("pb").value,avatar:S.av||undefined};const r=await T(()=>api("/api/identity","POST",body),"Identity saved");if(r){S.av=null;S.filled=false;refresh()}};
+}
+try{const ru=localStorage.getItem("sf-ru");if(ru){$("u").value=ru;$("rm").checked=true}}catch(e){}
+try{if(sessionStorage.getItem("sf-in")||TOK)enter()}catch(e){}
+</script></body></html>
